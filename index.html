@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tavolo del Master</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#141c24;--panel:#1b2631;--ink:#e7e2d4;--muted:#8fa0ad;--line:#2c3a47;--padoff:#1f2b36;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --ui:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;--serif:"Spectral",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141c24;--panel:#1b2631;--ink:#e7e2d4;--muted:#8fa0ad;--line:#2c3a47;--padoff:#1f2b36}}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#e6ebef;--panel:#f6f8fa;--ink:#18222c;--muted:#5b6b78;--line:#c5cfd8;--padoff:#d5dde4}}
+:root[data-theme="dark"]{--bg:#141c24;--panel:#1b2631;--ink:#e7e2d4;--muted:#8fa0ad;--line:#2c3a47;--padoff:#1f2b36}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 var(--ui)}
+button{font:600 13px var(--ui);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+:focus-visible{outline:2px solid #6cc0f5;outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:flex-end;padding:16px 20px;border-bottom:1px solid var(--line)}
+.stat{display:flex;flex-direction:column;min-width:0}
+.stat .k{font-size:12px;color:var(--muted)}
+.stat b{font:600 20px var(--serif)}
+.stat .sub{font-size:13px;color:var(--muted)}
+.stat.wide{flex:1 1 220px}
+.grid{display:grid;grid-template-columns:minmax(300px,460px) minmax(0,1fr);gap:16px;padding:16px 20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.left,.right{display:grid;gap:16px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
+#map{width:100%;height:auto;display:block}
+#map polygon{cursor:pointer;stroke:var(--panel);stroke-width:1.5}
+#map polygon:hover{stroke:var(--ink)}
+#map polygon.cur{stroke:var(--ink);stroke-width:3}
+#map text{font:600 8px var(--ui);fill:rgba(255,255,255,.55);pointer-events:none}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:10px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.legend .on{color:var(--ink);font-weight:600}
+.padhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pads{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.pad{aspect-ratio:1;padding:2px;font-size:clamp(8px,1.9vw,11px);line-height:1.1;background:var(--c);color:#10161c;border:0;border-radius:5px;overflow:hidden;word-break:break-word}
+.pad:active{filter:brightness(1.35)}
+.pad.off{background:var(--padoff);cursor:default}
+.muted{color:var(--muted);font-size:12.5px;margin:10px 0 0}
+.result{background:var(--panel);border:1px solid var(--line);border-left:8px solid var(--c,var(--line));border-radius:10px;padding:20px 22px;min-height:190px}
+.result .lab{font-weight:600;color:var(--c,var(--muted));font-size:14px}
+.result .txt{font:400 clamp(24px,3.6vw,36px)/1.25 var(--serif);margin:10px 0 14px;overflow-wrap:anywhere}
+.result .meta{font-size:12.5px;color:var(--muted)}
+.result .ref{font-style:italic;border-bottom:1px dotted var(--muted)}
+.result .txt b{font-weight:600}
+.result.fresh{animation:fresh .35s ease-out}
+@keyframes fresh{from{background:color-mix(in srgb,var(--c) 22%,var(--panel))}to{background:var(--panel)}}
+@media (prefers-reduced-motion:reduce){.result.fresh{animation:none}}
+#log{list-style:none;margin:0;padding:0;max-height:44vh;overflow:auto}
+#log li{padding:8px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:96px 1fr;gap:10px;font-size:14px}
+#log li:first-child{border-top:0}
+#log .w{color:var(--muted);font-size:12px}
+#log .l{font-weight:600;color:var(--c)}
+#log .ref{font-style:italic}
+.panel{position:fixed;inset:0;background:rgba(8,12,16,.72);display:grid;place-items:center;padding:16px;z-index:20}
+.panel[hidden]{display:none}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;width:min(820px,100%);max-height:92vh;display:flex;flex-direction:column;gap:10px;padding:16px}
+.box p{margin:0;font-size:13px;color:var(--muted)}
+.box code{font-size:12px;color:var(--ink)}
+textarea{flex:1;min-height:300px;width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row .sp{flex:1}
+#err{color:#ff7b7b;font-size:13px;min-height:18px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="stat"><span class="k">Posizione</span><b id="sPos">–</b><span class="sub" id="sReg"></span></div>
+  <div class="stat"><span class="k">Tempo</span><b id="sTime">–</b></div>
+  <div class="stat wide"><span class="k">Meteo</span><b id="sMeteo">–</b></div>
+  <button id="bData">Dati e tabelle</button>
+</header>
+
+<main class="grid">
+  <section class="left">
+    <div class="card">
+      <h2>Mappa: clicca un hex per spostare il party senza costo di tempo</h2>
+      <svg id="map" role="img" aria-label="Mappa a esagoni"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="card">
+      <div class="padhead"><b>Launchpad</b><button id="bMidi">Collega Launchpad</button></div>
+      <div class="pads" id="pads"></div>
+      <p class="muted" id="midiStatus">Senza Launchpad usa i pad a schermo: sono identici.</p>
+    </div>
+  </section>
+
+  <section class="right">
+    <article class="result" id="result"></article>
+    <div class="card"><h2>Registro della sessione</h2><ol id="log"></ol></div>
+  </section>
+</main>
+
+<div class="panel" id="panel" hidden>
+  <div class="box" role="dialog" aria-label="Dati e tabelle">
+    <div class="row"><b>Dati del mondo (JSON)</b><span class="sp"></span><button id="bClose">Chiudi</button></div>
+    <p>Mappa, regioni, sottoregioni e tabelle in un unico file. Le voci possono essere testo semplice oppure <code>{"peso":3,"testo":"…"}</code>. Rimandi: <code>[[tabella:id]]</code>. Dadi: <code>{2d6+1}</code>.</p>
+    <textarea id="json" spellcheck="false"></textarea>
+    <div id="err"></div>
+    <div class="row">
+      <button id="bApply">Applica dati</button>
+      <button id="bCopy">Copia JSON</button>
+      <label class="row"><input type="file" id="file" accept=".json,application/json"> </label>
+      <span class="sp"></span>
+      <button id="bResetS">Nuova sessione</button>
+      <button id="bResetD">Ripristina esempio</button>
+    </div>
+  </div>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+/* ============ DATI DI ESEMPIO ============ */
+const DEFAULT_DATA = {
+  mappa: {
+    colonne: 10, righe: 7,
+    legenda: { p:"palude", f:"foresta", c:"colline", v:"vette", r:"rovine", a:"pianura" },
+    terreno: [
+      "ffffcvvvvv",
+      "fffccvvrvv",
+      "ppffccvrcc",
+      "pppfaacccc",
+      "ppaaaaaacc",
+      "pppaaaaffc",
+      "pppaaaarff"
+    ],
+    inizio: "E4"
+  },
+  regioni: {
+    marche_grigie: { nome:"Marche Grigie", tabelle:{ meteo:"meteo_umido" }, extra:[] },
+    altopiani:     { nome:"Altopiani di Veth", tabelle:{ meteo:"meteo_montagna" }, extra:[] },
+    terre_fiume:   { nome:"Terre del Fiume", tabelle:{}, extra:[] }
+  },
+  sottoregioni: {
+    palude:  { nome:"Palude di Orm",      regione:"marche_grigie", colore:"#4b6b57", pericolo:3, tabelle:{ incontri:"inc_palude",  rumore:"rum_palude" },  extra:["mostri_palude"] },
+    foresta: { nome:"Bosco Cinereo",      regione:"marche_grigie", colore:"#2f5a3c", pericolo:3, tabelle:{ incontri:"inc_foresta", rumore:"rum_foresta" }, extra:[] },
+    colline: { nome:"Colline Ventose",    regione:"altopiani",     colore:"#8a7a45", pericolo:2, tabelle:{ incontri:"inc_colline" }, extra:[] },
+    vette:   { nome:"Vette Spezzate",     regione:"altopiani",     colore:"#8793a0", pericolo:4, tabelle:{ incontri:"inc_vette" },   extra:[] },
+    rovine:  { nome:"Rovine di Sael",     regione:"altopiani",     colore:"#7a5a6e", pericolo:4, tabelle:{ incontri:"inc_rovine" },  extra:["trappole_rovine"] },
+    pianura: { nome:"Piana Lunga",        regione:"terre_fiume",   colore:"#a39a62", pericolo:2, tabelle:{ incontri:"inc_pianura" }, extra:[] }
+  },
+  globale: {
+    tabelle: { meteo:"meteo_temperato", incontri:"inc_generico", eventi:"eventi_viaggio", loot:"loot_comune",
+               png:"png_viandanti", voci:"voci_regno", rumore:"rum_generico", nome:"nome_pg" },
+    extra: ["tesoro_nascosto"]
+  },
+  tabelle: [
+    { id:"meteo_temperato", nome:"Meteo temperato", voci:[
+      {peso:4,testo:"Cielo sereno, aria mite"},{peso:3,testo:"Nuvoloso, nessuna pioggia"},
+      {peso:2,testo:"Pioggia leggera: −1 alla percezione passiva"},{peso:1,testo:"Vento forte: niente voli"},
+      {peso:1,testo:"Temporale: visibilità ridotta, riparo per {1d3} ore"}]},
+    { id:"meteo_umido", nome:"Meteo umido", voci:[
+      {peso:3,testo:"Nebbia fitta: visibilità 10 m"},{peso:3,testo:"Pioggia fine e continua"},
+      {peso:2,testo:"Nuvoloso, aria pesante"},{peso:1,testo:"Acquazzone: i sentieri si allagano"},
+      {peso:1,testo:"Schiarita pallida, zanzare ovunque"}]},
+    { id:"meteo_montagna", nome:"Meteo di montagna", voci:[
+      {peso:2,testo:"Sereno e gelido"},{peso:3,testo:"Vento tagliente: −1 ai tiri a distanza"},
+      {peso:2,testo:"Nevischio"},{peso:2,testo:"Nebbia d’alta quota"},
+      {peso:1,testo:"Bufera: riparo obbligato per {1d4} ore, rischio assideramento"}]},
+
+    { id:"inc_generico", nome:"Incontri generici", voci:[
+      {peso:3,testo:"[[tabella:png_viandanti]]"},{peso:2,testo:"Pattuglia del Conte: chiede pedaggio di {1d6} mo"},
+      {peso:2,testo:"[[tabella:bande]]"},{peso:1,testo:"Un cervo bianco attraversa il sentiero, subito scomparso"}]},
+    { id:"inc_palude", nome:"Incontri di palude", voci:[
+      {peso:3,testo:"Banditi in agguato tra le canne: [[tabella:bande]]"},{peso:3,testo:"[[tabella:mostri_palude]]"},
+      {peso:2,testo:"Carovana impantanata: i conducenti chiedono aiuto"},
+      {peso:1,testo:"Fuochi fatui attirano il gruppo fuori dal sentiero"},{peso:1,testo:"Cacciatore di taglie in cerca di un fuggitivo"}]},
+    { id:"inc_foresta", nome:"Incontri di foresta", voci:[
+      {peso:3,testo:"{2d4} lupi che seguono il gruppo da un’ora"},{peso:2,testo:"Un druido erra tra gli alberi: [[tabella:nome_pg]]"},
+      {peso:2,testo:"Bracconieri con trappole sul sentiero"},{peso:2,testo:"Ragni giganti ({1d4})"},{peso:1,testo:"[[tabella:bande]]"}]},
+    { id:"inc_colline", nome:"Incontri di collina", voci:[
+      {peso:3,testo:"Pastore con {3d10} pecore, vende formaggio e dicerie"},{peso:2,testo:"[[tabella:bande]]"},
+      {peso:2,testo:"Ogre di collina in cerca di cibo"},{peso:1,testo:"Grifone che sorvola il gruppo e atterra su un’altura"}]},
+    { id:"inc_vette", nome:"Incontri di montagna", voci:[
+      {peso:3,testo:"{1d6+2} orchi in caccia"},{peso:2,testo:"Aquila gigante ferita"},
+      {peso:2,testo:"Valanga: tiro salvezza Destrezza CD 13"},{peso:1,testo:"Eremita che offre riparo in cambio di una storia"}]},
+    { id:"inc_rovine", nome:"Incontri nelle rovine", voci:[
+      {peso:3,testo:"{1d4} spettri legati a un antico giuramento"},{peso:2,testo:"Saccheggiatori di tombe rivali: [[tabella:bande]]"},
+      {peso:2,testo:"Sentinella animata che ripete un ordine dimenticato"},{peso:1,testo:"Cultisti che officiano un rito a metà"}]},
+    { id:"inc_pianura", nome:"Incontri di pianura", voci:[
+      {peso:3,testo:"[[tabella:png_viandanti]]"},{peso:2,testo:"{1d4+1} cavalieri in pattuglia"},
+      {peso:2,testo:"Contadini in fuga da qualcosa a est"},{peso:1,testo:"Ladri travestiti da pellegrini"}]},
+    { id:"bande", nome:"Bande armate", voci:[
+      "{2d6} banditi guidati da un ex soldato","{1d6+2} disertori affamati e poco convinti",
+      "Banda di {2d4} ladri, il capo si fa chiamare [[tabella:nome_pg]]"]},
+    { id:"mostri_palude", nome:"Mostri della palude", voci:[
+      {peso:3,testo:"{1d6+1} ghoul affamati"},{peso:2,testo:"Sciame di zanzare giganti"},
+      {peso:2,testo:"Megera delle canne che offre un patto"},{peso:1,testo:"Idra a tre teste emerge dalla melma"}]},
+
+    { id:"eventi_viaggio", nome:"Eventi di viaggio", voci:[
+      "Ponte crollato: servono {1d3} ore per aggirarlo","Guado difficile: prova di Atletica CD 12",
+      "Segni di un accampamento recente, la cenere è ancora tiepida","Cadavere con una lettera sigillata in tasca",
+      "Sorgente d’acqua limpida: tutti recuperano {1d4} PF","Una bestia da soma si azzoppa",
+      "Colonna di fumo all’orizzonte","Il sentiero si divide: uno dei due non è sulle mappe"]},
+    { id:"loot_comune", nome:"Bottino comune", voci:[
+      {peso:3,testo:"{3d6} monete d’argento"},{peso:2,testo:"Pozione: [[tabella:pozioni]]"},
+      {peso:2,testo:"Gemma del valore di {2d6} mo"},{peso:1,testo:"Una chiave senza serratura"},{peso:1,testo:"Mappa strappata, mostra un hex vicino"}]},
+    { id:"pozioni", nome:"Pozioni", voci:["Guarigione","Veleno (sembra vino)","Invisibilità instabile (1 minuto)","Aceto"]},
+    { id:"png_viandanti", nome:"Viandanti", voci:[
+      "[[tabella:nome_pg]], mercante di sale, sospettoso","[[tabella:nome_pg]], pellegrino stonato che conosce una scorciatoia",
+      "[[tabella:nome_pg]], messaggero del Conte, ha fretta","[[tabella:nome_pg]], menestrello senza liuto"]},
+    { id:"nome_pg", nome:"Nomi", voci:["[[tabella:nome_a]] [[tabella:nome_b]]"]},
+    { id:"nome_a", nome:"Nomi: primo", voci:["Aldo","Brenna","Corvin","Dessa","Edrik","Fiora","Gorm","Hilde"]},
+    { id:"nome_b", nome:"Nomi: secondo", voci:["dei Salici","Mezzamano","il Rosso","di Ponte Vecchio","Pietrafredda","la Zoppa"]},
+    { id:"voci_regno", nome:"Voci e dicerie", voci:[
+      "Si dice che il Conte non paghi più i soldati","Una stella è caduta oltre le Vette Spezzate",
+      "Nelle rovine di Sael qualcosa ha ripreso a battere le ore","Il fiume porta acqua rossa da tre giorni",
+      "Un’intera carovana è sparita sulla strada della palude"]},
+    { id:"rum_generico", nome:"Rumori", voci:["Silenzio innaturale","Un corvo gracchia, poi un altro","Rumore di zoccoli lontani","Campanelle di un gregge"]},
+    { id:"rum_palude", nome:"Rumori di palude", voci:["Bolle che salgono dalla melma","Un tonfo pesante nell’acqua","Un canto sommesso tra le canne","Rane che smettono di colpo"]},
+    { id:"rum_foresta", nome:"Rumori di foresta", voci:["Rami che si spezzano a sinistra","Un ululato, nessuna risposta","Passi che si fermano quando ti fermi","Un colpo d’ascia lontano"]},
+    { id:"tesoro_nascosto", nome:"Scoperte", voci:[
+      {peso:4,testo:"Nulla di rilevante"},{peso:2,testo:"Tracce di un vecchio nascondiglio"},
+      {peso:1,testo:"Forziere interrato: [[tabella:loot_comune]]"}]},
+    { id:"trappole_rovine", nome:"Trappole", voci:[
+      "Lastra a pressione: dardi, {2d6} danni","Fossa coperta da un velo di polvere","Glifo che sussurra il nome di chi lo sfiora","Porta che si richiude alle spalle"]}
+  ]
+};
+
+/* ============ STATO ============ */
+const FASCE = ["Mattina","Pomeriggio","Sera","Notte"];
+const SLOTS = [
+  {k:"meteo",label:"Meteo",pal:37,css:"#3fb7e0"},{k:"incontri",label:"Incontro",pal:5,css:"#e5484d"},
+  {k:"eventi",label:"Evento",pal:9,css:"#f08a24"},{k:"loot",label:"Loot",pal:13,css:"#f2c230"},
+  {k:"png",label:"PNG",pal:53,css:"#e56ab3"},{k:"voci",label:"Voci",pal:49,css:"#9a7be8"},
+  {k:"rumore",label:"Rumori",pal:21,css:"#3fb36b"},{k:"nome",label:"Nome",pal:3,css:"#d8dde2"}];
+const CAT = Object.fromEntries(SLOTS.map(s=>[s.k,s]));
+CAT.viaggio = {label:"Viaggio",css:"#3d6bf2"};
+CAT.extra = {label:"Tabella",css:"#9bd13f"};
+
+let data, T, HEX, state;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const strip = s => String(s).replace(/[\u0001-\u0004]/g,"");
+const fmt = s => esc(s).replace(/\u0001/g,'<span class="ref">').replace(/\u0002/g,"</span>").replace(/\u0003/g,"<b>").replace(/\u0004/g,"</b>");
+
+function store(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function load(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
+
+/* ============ MONDO ============ */
+function build(){
+  T = Object.fromEntries(data.tabelle.map(t=>[t.id,t]));
+  HEX = {};
+  const m = data.mappa;
+  for(let r=0;r<m.righe;r++) for(let q=0;q<m.colonne;q++){
+    const ch = (m.terreno[r]||"")[q];
+    const subId = m.legenda[ch];
+    if(!subId || !data.sottoregioni[subId]) continue;
+    const id = String.fromCharCode(65+q)+(r+1);
+    const sub = data.sottoregioni[subId];
+    HEX[id] = {id,q,r,subId,sub,reg:data.regioni[sub.regione]||{nome:"–",tabelle:{},extra:[]}};
+  }
+}
+const cur = () => HEX[state.pos];
+function neighbor(q,r,d){
+  const o=q&1;
+  const m={N:[0,-1],S:[0,1],NE:[1,o?0:-1],SE:[1,o?1:0],SO:[-1,o?1:0],NO:[-1,o?0:-1]}[d];
+  return [q+m[0],r+m[1]];
+}
+const hexId = (q,r) => String.fromCharCode(65+q)+(r+1);
+function tableFor(slot,h){
+  return h.sub.tabelle?.[slot] ?? h.reg.tabelle?.[slot] ?? data.globale.tabelle?.[slot];
+}
+function extras(){
+  const h=cur();
+  return [...new Set([...(h.sub.extra||[]),...(h.reg.extra||[]),...(data.globale.extra||[])])].filter(id=>T[id]);
+}
+
+/* ============ GENERATORE ============ */
+function pick(voci){
+  const v = voci.map(x=>typeof x==="string"?{peso:1,testo:x}:{peso:x.peso??1,testo:x.testo});
+  let r = Math.random()*v.reduce((a,x)=>a+x.peso,0);
+  for(const x of v){ if((r-=x.peso)<0) return x; }
+  return v[v.length-1];
+}
+function roll(id,depth=0){
+  const t=T[id];
+  if(!t) return "⟦tabella mancante: "+id+"⟧";
+  let txt = pick(t.voci).testo;
+  txt = txt.replace(/\{(\d*)d(\d+)([+-]\d+)?\}/gi,(_,n,s,mod)=>{
+    n=+n||1; let tot=+(mod||0);
+    for(let i=0;i<n;i++) tot+=1+Math.floor(Math.random()*(+s));
+    return "\u0003"+tot+"\u0004";
+  });
+  txt = txt.replace(/\[\[tabella:([^\]]+)\]\]/g,(_,rid)=> depth<6 ? "\u0001"+roll(rid.trim(),depth+1)+"\u0002" : "…");
+  return txt;
+}
+const d6 = () => 1+Math.floor(Math.random()*6);
+
+/* ============ TEMPO E METEO ============ */
+function newWeather(force){
+  const tid = tableFor("meteo",cur()); if(!tid) return;
+  if(!force && state.meteo && Math.random()<0.5) return; // il tempo tende a persistere
+  state.meteo = strip(roll(tid));
+}
+function advance(n){
+  let nd=false; state.fascia+=n;
+  while(state.fascia>=4){ state.fascia-=4; state.giorno++; nd=true; }
+  if(nd) newWeather(false);
+  return nd;
+}
+
+/* ============ AZIONI ============ */
+function show(cat,label,text,meta){
+  const h=cur();
+  const entry = {quando:"G"+state.giorno+" · "+FASCE[state.fascia],dove:h.id,cat,label,testo:text,
+                 meta:meta||(h.id+" · "+h.sub.nome)};
+  state.ultimo=entry; state.log.unshift(entry); state.log=state.log.slice(0,200);
+  store("hexdm:stato",state); render(true);
+}
+function gen(slot){
+  const tid=tableFor(slot,cur());
+  if(!tid){ toast("Nessuna tabella per «"+CAT[slot].label+"» in questa zona"); return; }
+  const txt=roll(tid);
+  if(slot==="meteo") state.meteo=strip(txt);
+  show(slot,CAT[slot].label,txt,cur().id+" · "+cur().sub.nome+" · "+(T[tid]?.nome||tid));
+}
+function genTable(id){ show("extra",T[id].nome,roll(id),cur().id+" · "+cur().sub.nome+" · "+T[id].nome); }
+function move(d){
+  const h=cur(), [q,r]=neighbor(h.q,h.r,d), id=hexId(q,r);
+  if(!HEX[id]){ toast("Bordo della mappa: niente a "+d); return; }
+  state.pos=id;
+  const nd=advance(1), h2=cur(), danger=h2.sub.pericolo??2, dado=d6();
+  let cat="viaggio", label="Viaggio verso "+d+" → "+id, txt;
+  if(dado<=danger){ cat="incontri"; label="Incontro in viaggio (d6 "+dado+" ≤ "+danger+")"; txt=roll(tableFor("incontri",h2)||""); }
+  else txt="Strada libera (d6 "+dado+" > "+danger+").";
+  show(cat,label,txt,id+" · "+h2.sub.nome+(nd?" · nuovo giorno, meteo: "+state.meteo:""));
+}
+function rest(){ advance(1); show("viaggio","Riposo","Il party riposa. Ora: "+FASCE[state.fascia]+"."); }
+function newDay(){ state.fascia=0; state.giorno++; newWeather(false); show("viaggio","Nuovo giorno","Alba del giorno "+state.giorno+". Meteo: "+state.meteo+"."); }
+
+/* ============ PAD (virtuali + Launchpad) ============ */
+function padDef(row,col){
+  if(row===8){ const s=SLOTS[col-1]; return {label:s.label,pal:s.pal,css:s.css,run:()=>gen(s.k)}; }
+  if(row===7){
+    if(col<=6){ const d=["N","NE","SE","S","SO","NO"][col-1]; return {label:d,pal:45,css:"#3d6bf2",run:()=>move(d)}; }
+    if(col===7) return {label:"Riposo",pal:25,css:"#2fb5a0",run:rest};
+    return {label:"Alba",pal:37,css:"#3fb7e0",run:newDay};
+  }
+  const ex=extras()[(6-row)*8+(col-1)];
+  return ex?{label:T[ex].nome,pal:17,css:"#9bd13f",run:()=>genTable(ex)}:null;
+}
+function press(row,col){
+  const d=padDef(row,col); if(!d) return;
+  led(row,col,3); setTimeout(()=>led(row,col,d.pal),140);
+  d.run();
+}
+function paintPads(){
+  let h="";
+  for(let row=8;row>=1;row--) for(let col=1;col<=8;col++){
+    const d=padDef(row,col);
+    h+= d ? `<button class="pad" data-r="${row}" data-c="${col}" style="--c:${d.css}" title="${esc(d.label)}" aria-label="${esc(d.label)}">${esc(d.label)}</button>`
+          : `<button class="pad off" disabled aria-hidden="true" tabindex="-1"></button>`;
+  }
+  $("#pads").innerHTML=h;
+  if(midiOut) for(let row=1;row<=8;row++) for(let col=1;col<=8;col++){ const d=padDef(row,col); led(row,col,d?d.pal:0); }
+}
+$("#pads").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-r]"); if(b) press(+b.dataset.r,+b.dataset.c);
+});
+
+let midiOut=null, midiIn=null;
+function led(r,c,pal){ if(midiOut){ try{ midiOut.send([0x90,r*10+c,pal]); }catch(e){} } }
+function onMidi(e){
+  const [st,n,v]=e.data;
+  if((st&0xF0)===0x90 && v>0){
+    const row=Math.floor(n/10), col=n%10;
+    if(row>=1&&row<=8&&col>=1&&col<=8) press(row,col);
+  }
+}
+async function connectMidi(){
+  const s=$("#midiStatus");
+  if(!navigator.requestMIDIAccess){ s.textContent="Web MIDI non disponibile: usa Chrome o Edge."; return; }
+  try{
+    const acc=await navigator.requestMIDIAccess({sysex:true});
+    const find=ports=>{ const a=[...ports.values()];
+      return a.find(p=>/launchpad|\blp/i.test(p.name)&&!/daw|din/i.test(p.name))||a.find(p=>/launchpad|\blp/i.test(p.name)); };
+    midiIn=find(acc.inputs); midiOut=find(acc.outputs);
+    if(!midiIn||!midiOut){ midiOut=null; s.textContent="Nessun Launchpad trovato. Collegalo via USB e riprova."; return; }
+    midiIn.onmidimessage=onMidi;
+    [0x0C,0x0D,0x0E].forEach(id=>{ try{ midiOut.send([0xF0,0x00,0x20,0x29,0x02,id,0x0E,0x01,0xF7]); }catch(e){} }); // Programmer mode: X, Mini MK3, Pro MK3
+    s.textContent="Collegato: "+midiOut.name;
+    $("#bMidi").textContent="Ricollega Launchpad";
+    paintPads();
+  }catch(err){
+    midiOut=null;
+    s.textContent="MIDI bloccato dal browser in questa pagina. Apri la pagina in una scheda a sé, oppure salvala e aprila dal tuo computer.";
+  }
+}
+$("#bMidi").addEventListener("click",connectMidi);
+
+/* ============ RENDER ============ */
+function renderMap(){
+  const S=24,m=data.mappa,W=S*(1.5*(m.colonne-1)+2)+4,H=S*1.732*(m.righe+.5)+4;
+  let svg="";
+  for(const id in HEX){
+    const h=HEX[id], cx=S+2+S*1.5*h.q, cy=S*.866+2+S*1.732*(h.r+.5*(h.q&1));
+    const pts=[0,60,120,180,240,300].map(a=>(cx+S*Math.cos(a*Math.PI/180)).toFixed(1)+","+(cy+S*Math.sin(a*Math.PI/180)).toFixed(1)).join(" ");
+    svg+=`<polygon data-id="${id}" points="${pts}" fill="${h.sub.colore||"#555"}" class="${id===state.pos?"cur":""}"><title>${id} · ${esc(h.sub.nome)}</title></polygon>`
+        +`<text x="${cx}" y="${cy+S*.62}" text-anchor="middle">${id}</text>`;
+  }
+  const c=cur(), cx=S+2+S*1.5*c.q, cy=S*.866+2+S*1.732*(c.r+.5*(c.q&1));
+  svg+=`<circle cx="${cx}" cy="${cy-3}" r="6" fill="#fff" stroke="#10161c" stroke-width="2" pointer-events="none"/>`;
+  const el=$("#map"); el.setAttribute("viewBox",`0 0 ${W} ${H}`); el.innerHTML=svg;
+  $("#legend").innerHTML=Object.entries(data.sottoregioni).map(([k,s])=>
+    `<span class="${k===c.subId?"on":""}"><i style="background:${s.colore||"#555"}"></i>${esc(s.nome)}</span>`).join("");
+}
+$("#map").addEventListener("click",e=>{
+  const p=e.target.closest("polygon"); if(!p) return;
+  state.pos=p.dataset.id; store("hexdm:stato",state); render(false);
+});
+function render(fresh){
+  const h=cur();
+  $("#sPos").textContent=h.id+" · "+h.sub.nome;
+  $("#sReg").textContent=h.reg.nome;
+  $("#sTime").textContent="Giorno "+state.giorno+" · "+FASCE[state.fascia];
+  $("#sMeteo").textContent=state.meteo||"non ancora tirato (premi Meteo)";
+  renderMap(); paintPads();
+  const u=state.ultimo, r=$("#result");
+  if(u){
+    const css=(CAT[u.cat]||CAT.extra).css;
+    r.style.setProperty("--c",css);
+    r.innerHTML=`<div class="lab">${esc(u.label)}</div><div class="txt">${fmt(u.testo)}</div><div class="meta">${esc(u.quando)} · ${esc(u.meta)}</div>`;
+    r.classList.remove("fresh"); if(fresh){ void r.offsetWidth; r.classList.add("fresh"); }
+  } else {
+    r.style.removeProperty("--c");
+    r.innerHTML=`<div class="lab">Pronto</div><div class="txt">Premi un pad per generare. Prova «Incontro» o muoviti con N, NE, SE…</div><div class="meta">Il risultato appare qui, grande, leggibile dal tavolo.</div>`;
+  }
+  $("#log").innerHTML=state.log.map(l=>
+    `<li style="--c:${(CAT[l.cat]||CAT.extra).css}"><div class="w">${esc(l.quando)}<br>${esc(l.dove)}</div><div><span class="l">${esc(l.label)}</span><br>${fmt(l.testo)}</div></li>`).join("")
+    || `<li><div class="w"></div><div class="w">Ancora vuoto.</div></li>`;
+}
+
+/* ============ PANNELLO DATI ============ */
+let toastT;
+function toast(t){ const e=$("#toast"); e.textContent=t; e.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>e.classList.remove("on"),2200); }
+function openPanel(){ $("#json").value=JSON.stringify(data,null,1); $("#err").textContent=""; $("#panel").hidden=false; }
+function applyData(txt){
+  try{
+    const d=JSON.parse(txt);
+    for(const k of ["mappa","regioni","sottoregioni","globale","tabelle"]) if(!d[k]) throw new Error("Manca la sezione «"+k+"»");
+    data=d; build();
+    if(!HEX[state.pos]) state.pos=HEX[data.mappa.inizio]?data.mappa.inizio:Object.keys(HEX)[0];
+    store("hexdm:dati",data); store("hexdm:stato",state);
+    $("#panel").hidden=true; render(false); toast("Dati applicati");
+  }catch(e){ $("#err").textContent="Errore: "+e.message; }
+}
+function confirmBtn(btn,fn){
+  let armed=false,t,label=btn.textContent;
+  btn.addEventListener("click",()=>{
+    if(!armed){ armed=true; btn.textContent="Sicuro? Clicca di nuovo"; t=setTimeout(()=>{armed=false;btn.textContent=label;},3000); return; }
+    clearTimeout(t); armed=false; btn.textContent=label; fn();
+  });
+}
+function freshState(){
+  return {pos:HEX[data.mappa.inizio]?data.mappa.inizio:Object.keys(HEX)[0],giorno:1,fascia:0,meteo:"",log:[],ultimo:null};
+}
+$("#bData").addEventListener("click",openPanel);
+$("#bClose").addEventListener("click",()=>$("#panel").hidden=true);
+$("#bApply").addEventListener("click",()=>applyData($("#json").value));
+$("#bCopy").addEventListener("click",async()=>{
+  const ta=$("#json");
+  try{ await navigator.clipboard.writeText(ta.value); toast("JSON copiato"); }
+  catch(e){ ta.select(); toast("Selezionato: premi Ctrl/Cmd+C"); }
+});
+$("#file").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=()=>{ $("#json").value=r.result; applyData(r.result); }; r.readAsText(f);
+});
+confirmBtn($("#bResetS"),()=>{ state=freshState(); newWeather(true); store("hexdm:stato",state); $("#panel").hidden=true; render(false); toast("Nuova sessione"); });
+confirmBtn($("#bResetD"),()=>{ $("#json").value=JSON.stringify(DEFAULT_DATA,null,1); applyData($("#json").value); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") $("#panel").hidden=true; });
+
+/* ============ AVVIO ============ */
+data = load("hexdm:dati") || clone(DEFAULT_DATA);
+try{ build(); if(!Object.keys(HEX).length) throw 0; }catch(e){ data=clone(DEFAULT_DATA); build(); }
+state = load("hexdm:stato") || freshState();
+if(!HEX[state.pos]) state.pos=freshState().pos;
+if(!state.meteo) newWeather(true);
+render(false);
+</script>
+</body>
+</html>
