@@ -1,4 +1,4 @@
-# Hexopad
+# Enzopad
 
 Web app per gestire sessioni di D&D in hexcrawl con un Launchpad (Web MIDI).
 
