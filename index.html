@@ -65,12 +65,95 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;width:min(820px,100%);max-height:92vh;display:flex;flex-direction:column;gap:10px;padding:16px}
 .box p{margin:0;font-size:13px;color:var(--muted)}
 .box code{font-size:12px;color:var(--ink)}
-textarea{flex:1;min-height:300px;width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+#json{flex:1;min-height:300px;width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .row .sp{flex:1}
 #err{color:#ff7b7b;font-size:13px;min-height:18px}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
 #toast.on{opacity:1}
+
+/* ---- Compagnia (pagina principale) ---- */
+.party{display:grid;gap:12px}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+.prow.dead{opacity:.55}
+.pname{font:600 16px var(--serif);background:none;border:0;padding:0;text-align:left;color:var(--ink)}
+.pname:hover{text-decoration:underline}
+.pmeta{font-size:12px;color:var(--muted)}
+.hpbtns{display:flex;gap:4px;align-items:center}
+.hpbtns button{padding:4px 0;width:34px}
+.hpt{font:600 14px var(--ui);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.hp{grid-column:1/-1;height:12px;background:var(--padoff);border-radius:6px;overflow:hidden}
+.hp i{display:block;height:100%;background:var(--hc);transition:width .2s}
+.pcond{grid-column:1/-1;font-size:12.5px;color:#ff7b7b}
+.psec{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+.amt{width:56px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 6px;font:600 13px var(--ui)}
+.dung{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;border-top:1px solid var(--line);padding-top:10px;margin-top:2px}
+.dung .sp{flex:1}
+
+/* ---- Configuratore ---- */
+.cfg{grid-template-columns:minmax(0,1fr)}
+.cfg .box{width:min(1120px,100%);min-width:0;height:92vh;max-height:none;padding:0;gap:0}
+.cfghead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px}
+.cfghead b{font:600 17px var(--serif)}
+.cfghead .sp{flex:1}
+.filebtn{position:relative;overflow:hidden;font:600 13px var(--ui);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
+.filebtn:hover{border-color:var(--muted)}
+.filebtn:focus-within{outline:2px solid #6cc0f5;outline-offset:2px}
+.filebtn input{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}
+.tabs{min-width:0;display:flex;gap:2px;overflow-x:auto;padding:0 10px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--muted);padding:10px 12px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:#6cc0f5}
+.cfgbody{flex:1;overflow:auto;padding:16px;min-height:0}
+.cfg fieldset{border:1px solid var(--line);border-radius:10px;padding:12px 14px 14px;margin:0 0 14px;min-width:0}
+.cfg legend{font-weight:600;font-size:13px;color:var(--muted);padding:0 6px}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 12px}
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f>span{font-size:12px;color:var(--muted)}
+.f.w2{grid-column:span 2}
+.f.full{grid-column:1/-1}
+.f.chk{flex-direction:row;align-items:center;gap:8px}
+.f.chk>span{font-size:14px;color:var(--ink)}
+.cfg input,.cfg select,.cfg textarea{width:100%;min-width:0;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:400 14px var(--ui)}
+.cfg textarea{min-height:64px;resize:vertical;line-height:1.4}
+.cfg input[type=checkbox]{width:18px;height:18px;padding:0}
+.cfg .row{margin-top:10px}
+.fg>.row{grid-column:1/-1;margin-top:0}
+.cfg .row .f{flex:0 1 200px}
+.pgwrap{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;align-items:start}
+.pgside{display:grid;gap:8px;position:sticky;top:0}
+.pglist{display:grid;gap:6px}
+.pgitem{text-align:left;display:grid;gap:5px;font-weight:400;padding:9px 10px}
+.pgitem b{font:600 14px var(--ui)}
+.pgitem .hp{height:6px}
+.pgitem[aria-current="true"]{border-color:#6cc0f5;background:color-mix(in srgb,#6cc0f5 10%,var(--panel))}
+.pghead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.pghead b{flex:1;font:600 22px var(--serif);min-width:0;overflow-wrap:anywhere}
+.abil{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.abil input{text-align:center;font:600 18px var(--serif)}
+.abil .mod{font-style:normal;font-size:12px;color:var(--muted);text-align:center}
+.der{font-size:13px;color:var(--muted);align-self:end;padding-bottom:8px}
+.der b{color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:400 12.5px var(--ui);padding:5px 10px;border-radius:999px}
+.chip[aria-pressed="true"]{background:#e5484d;color:#fff;border-color:#e5484d}
+.item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:12px}
+.itemhead{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.itemhead b{flex:1;font:600 16px var(--serif);min-width:0;overflow-wrap:anywhere}
+.itembar{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+.empty{text-align:center;padding:40px 10px;color:var(--muted)}
+.empty button{margin-top:10px}
+.sechead{display:flex;align-items:center;gap:8px}
+.sechead b{flex:1;font:600 16px var(--serif)}
+.sechead+.sechead,.item+.sechead{margin-top:24px}
+#pxPrev{font-size:13.5px;color:var(--ink);margin-top:10px}
+#pxPrev ul{margin:6px 0 0;padding-left:18px}
+.up{color:#3fb36b;font-weight:600}
+@media (max-width:760px){
+  .pgwrap{grid-template-columns:minmax(0,1fr)}
+  .pgside{position:static}
+  .f.w2{grid-column:auto}
+  .abil{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>
@@ -79,6 +162,8 @@ textarea{flex:1;min-height:300px;width:100%;background:var(--bg);color:var(--ink
   <div class="stat"><span class="k">Posizione</span><b id="sPos">–</b><span class="sub" id="sReg"></span></div>
   <div class="stat"><span class="k">Tempo</span><b id="sTime">–</b></div>
   <div class="stat wide"><span class="k">Meteo</span><b id="sMeteo">–</b></div>
+  <div class="stat"><span class="k">Campagna</span><b id="sCamp">–</b><span class="sub" id="sSess"></span></div>
+  <button id="bCfg">Campagna e party</button>
   <button id="bData">Dati e tabelle</button>
 </header>
 
@@ -98,6 +183,12 @@ textarea{flex:1;min-height:300px;width:100%;background:var(--bg);color:var(--ink
 
   <section class="right">
     <article class="result" id="result"></article>
+    <div class="card" id="partyCard">
+      <div class="padhead"><b>Compagnia</b>
+        <span class="row"><label class="pmeta">PF per clic <input id="hpAmt" class="amt" type="number" min="1" value="1"></label><button id="bCfg2">Configura</button></span>
+      </div>
+      <div class="party" id="party"></div>
+    </div>
     <div class="card"><h2>Registro della sessione</h2><ol id="log"></ol></div>
   </section>
 </main>
@@ -118,6 +209,23 @@ textarea{flex:1;min-height:300px;width:100%;background:var(--bg);color:var(--ink
     </div>
   </div>
 </div>
+<div class="panel cfg" id="cfg" hidden>
+  <div class="box" role="dialog" aria-label="Campagna e party">
+    <div class="cfghead">
+      <b id="cfgTitle">Campagna</b><span class="sp"></span>
+      <button data-act="exp">Esporta campagna</button>
+      <label class="filebtn">Importa campagna<input type="file" id="cfgFile" accept=".json,application/json"></label>
+      <button data-act="newcamp">Nuova campagna</button>
+      <button id="cfgClose">Chiudi</button>
+    </div>
+    <nav class="tabs" id="cfgTabs" role="tablist"></nav>
+    <div class="cfgbody" id="cfgBody"></div>
+  </div>
+</div>
+<datalist id="dlSistemi"><option>B/X · OSE</option><option>BECMI</option><option>OD&amp;D</option><option>AD&amp;D 1e</option><option>AD&amp;D 2e</option><option>Basic Fantasy</option><option>Labyrinth Lord</option><option>Swords &amp; Wizardry</option></datalist>
+<datalist id="dlClassi"><option>Chierico</option><option>Guerriero</option><option>Mago</option><option>Ladro</option><option>Nano</option><option>Elfo</option><option>Halfling</option><option>Paladino</option><option>Ranger</option><option>Druido</option><option>Illusionista</option><option>Assassino</option><option>Monaco</option><option>Bardo</option></datalist>
+<datalist id="dlRazze"><option>Umano</option><option>Nano</option><option>Elfo</option><option>Halfling</option><option>Mezzelfo</option><option>Gnomo</option><option>Mezzorco</option></datalist>
+<datalist id="dlAll"><option>Legge</option><option>Neutralità</option><option>Caos</option><option>Legale buono</option><option>Neutrale buono</option><option>Caotico buono</option><option>Legale neutrale</option><option>Neutrale puro</option><option>Caotico neutrale</option><option>Legale malvagio</option><option>Neutrale malvagio</option><option>Caotico malvagio</option></datalist>
 <div id="toast" role="status"></div>
 
 <script>
@@ -239,6 +347,7 @@ const SLOTS = [
 const CAT = Object.fromEntries(SLOTS.map(s=>[s.k,s]));
 CAT.viaggio = {label:"Viaggio",css:"#3d6bf2"};
 CAT.extra = {label:"Tabella",css:"#9bd13f"};
+CAT.party = {label:"Party",css:"#e0a84a"};
 
 let data, T, HEX, state;
 const $ = s => document.querySelector(s);
@@ -428,7 +537,7 @@ function render(fresh){
   $("#sReg").textContent=h.reg.nome;
   $("#sTime").textContent="Giorno "+state.giorno+" · "+FASCE[state.fascia];
   $("#sMeteo").textContent=state.meteo||"non ancora tirato (premi Meteo)";
-  renderMap(); paintPads();
+  renderMap(); paintPads(); renderCampSummary();
   const u=state.ultimo, r=$("#result");
   if(u){
     const css=(CAT[u.cat]||CAT.extra).css;
@@ -482,7 +591,476 @@ $("#file").addEventListener("change",e=>{
 });
 confirmBtn($("#bResetS"),()=>{ state=freshState(); newWeather(true); store("hexdm:stato",state); $("#panel").hidden=true; render(false); toast("Nuova sessione"); });
 confirmBtn($("#bResetD"),()=>{ $("#json").value=JSON.stringify(DEFAULT_DATA,null,1); applyData($("#json").value); });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape") $("#panel").hidden=true; });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ $("#panel").hidden=true; $("#cfg").hidden=true; } });
+
+/* ============ CAMPAGNA: REGOLE B/X ============ */
+// ts: [livello massimo, [Morte, Bacchette, Paralisi, Soffio, Incantesimi]]  ·  thac0: [livello massimo, THAC0]
+const CLASSI = {
+  Chierico:{dv:6,req:["SAG"],px:[0,1500,3000,6000,12000,25000,50000,100000,200000,300000,400000,500000,600000,700000],
+    ts:[[4,[11,12,14,16,15]],[8,[9,10,12,14,12]],[12,[6,7,9,11,9]],[14,[3,5,7,8,7]]],thac0:[[4,19],[8,17],[12,14],[14,12]]},
+  Guerriero:{dv:8,req:["FOR"],px:[0,2000,4000,8000,16000,32000,64000,120000,240000,360000,480000,600000,720000,840000],
+    ts:[[3,[12,13,14,15,16]],[6,[10,11,12,13,14]],[9,[8,9,10,10,12]],[12,[6,7,8,8,10]],[14,[4,5,6,5,8]]],thac0:[[3,19],[6,17],[9,14],[12,12],[14,10]]},
+  Mago:{dv:4,req:["INT"],px:[0,2500,5000,10000,20000,40000,80000,150000,300000,450000,600000,750000,900000,1050000],
+    ts:[[5,[13,14,13,16,15]],[10,[11,12,11,14,12]],[14,[8,9,8,11,8]]],thac0:[[5,19],[10,17],[14,14]]},
+  Ladro:{dv:4,req:["DES"],px:[0,1200,2400,4800,9600,20000,40000,80000,160000,280000,400000,520000,640000,760000],
+    ts:[[4,[13,14,13,16,15]],[8,[12,13,11,14,13]],[12,[10,11,9,12,10]],[14,[8,9,7,10,8]]],thac0:[[4,19],[8,17],[12,14],[14,12]]},
+  Nano:{dv:8,req:["FOR"],px:[0,2200,4400,8800,17000,35000,70000,140000,270000,400000,530000,660000],
+    ts:[[3,[8,9,10,13,12]],[6,[6,7,8,10,10]],[9,[4,5,6,7,8]],[12,[2,3,4,4,6]]],thac0:[[3,19],[6,17],[9,14],[12,12]]},
+  Elfo:{dv:6,req:["INT","FOR"],px:[0,4000,8000,16000,32000,64000,120000,250000,400000,600000],
+    ts:[[3,[12,13,13,15,15]],[6,[10,11,11,13,12]],[9,[8,9,9,10,10]],[10,[6,7,8,8,8]]],thac0:[[3,19],[6,17],[9,14],[10,12]]},
+  Halfling:{dv:6,req:["DES","FOR"],px:[0,2000,4000,8000,16000,32000,64000,120000],
+    ts:[[3,[8,9,10,13,12]],[6,[6,7,8,10,10]],[8,[4,5,6,7,8]]],thac0:[[3,19],[6,17],[8,14]]}
+};
+const ABIL = ["FOR","INT","SAG","DES","COS","CAR"];
+const TS = [["morte","Morte / veleno"],["bacchette","Bacchette magiche"],["paralisi","Paralisi / pietrificazione"],["soffio","Soffio del drago"],["incantesimi","Incantesimi / verghe / bastoni"]];
+const COND = ["Avvelenato","Paralizzato","Pietrificato","Malato","Maledetto","Affamato","Assetato","Esausto","Spaventato","Charmato","Cieco","Livello risucchiato"];
+const MONETE = [["mp","mp"],["mo","mo"],["me","me"],["ma","ma"],["mr","mr"]];
+
+const modOf = s => s===""||s==null ? null : +s<=3?-3 : +s<=5?-2 : +s<=8?-1 : +s<=12?0 : +s<=15?1 : +s<=17?2 : 3;
+const fmtMod = m => m==null ? "–" : (m>0?"+":"")+m;
+const dice = (n,s) => { let t=0; for(let i=0;i<n;i++) t+=1+Math.floor(Math.random()*s); return t; };
+const uid = () => Math.random().toString(36).slice(2,9);
+const byLevel = (rows,lv) => (rows.find(r=>lv<=r[0])||rows[rows.length-1])[1];
+
+function pxBonusAuto(p){
+  const c=CLASSI[p.classe]; if(!c) return 0;
+  const v=a=>+p[a]||0;
+  if(p.classe==="Elfo") return v("INT")>=16&&v("FOR")>=13?10 : v("INT")>=13&&v("FOR")>=13?5 : 0;
+  if(p.classe==="Halfling") return v("DES")>=13&&v("FOR")>=13?10 : v("DES")>=13||v("FOR")>=13?5 : 0;
+  const s=v(c.req[0]); if(!s) return 0;
+  return s<=5?-20 : s<=8?-10 : s<=12?0 : s<=15?5 : 10;
+}
+const pxBonus = p => p.pxBonus===""||p.pxBonus==null ? pxBonusAuto(p) : +p.pxBonus;
+function nextPx(p){ const c=CLASSI[p.classe]; return c ? c.px[+p.livello||1] ?? null : null; }
+function nextText(p){
+  const n=nextPx(p);
+  if(n==null) return CLASSI[p.classe] ? "Livello massimo" : "Classe libera: PX manuali";
+  const miss=n-(+p.px||0);
+  return miss<=0 ? "Pronto per il livello "+((+p.livello||1)+1)+"!" : "Livello "+((+p.livello||1)+1)+" a "+n.toLocaleString("it")+" PX (mancano "+miss.toLocaleString("it")+")";
+}
+function applyClass(p){
+  const c=CLASSI[p.classe]; if(!c) return false;
+  const lv=Math.max(1,+p.livello||1), ts=byLevel(c.ts,lv);
+  TS.forEach(([k],i)=>p.ts[k]=ts[i]);
+  p.thac0=byLevel(c.thac0,lv); p.dv="d"+c.dv;
+  return true;
+}
+
+/* ============ CAMPAGNA: DATI ============ */
+function newCamp(){
+  return {v:1,
+    info:{nome:"Nuova campagna",sistema:"B/X · OSE",master:"",ambientazione:"",sessione:1,inizio:"",prossima:"",dataMondo:"",
+          pxOro:true,sogliaMorte:0,iniziativa:"Di gruppo (d6)",ingombro:"Base (armatura + tesoro)",regole:"",note:""},
+    pg:[],seguaci:[],
+    compagnia:{marcia:"",guardie:"",turni:0,luce:0,torce:6,olio:0,razioni:7,acqua:1,animali:"",monete:{mp:0,mo:0,me:0,ma:0,mr:0},gemme:"",magici:"",note:""},
+    png:[],fazioni:[],missioni:[]};
+}
+const NUOVO = {
+  pg:()=>{ const p={id:uid(),nome:"",giocatore:"",classe:"Guerriero",razza:"Umano",allineamento:"Legge",stato:"Attivo",livello:1,px:0,pxBonus:"",
+    dv:"",pf:"",pfMax:"",ca:9,thac0:19,mov:"120' (40')",FOR:"",INT:"",SAG:"",DES:"",COS:"",CAR:"",
+    ts:{morte:"",bacchette:"",paralisi:"",soffio:"",incantesimi:""},cond:[],condNote:"",
+    armi:"",armatura:"",lingue:"Comune, allineamento",abilita:"",incantesimi:"",equip:"",ingombro:"",monete:{mp:0,mo:0,me:0,ma:0,mr:0},note:""};
+    applyClass(p); return p; },
+  seguaci:()=>({id:uid(),nome:"",tipo:"Seguace",classe:"",livello:1,pf:"",pfMax:"",ca:9,thac0:19,morale:7,paga:"",padrone:"",px:0,stato:"Attivo",equip:"",note:""}),
+  png:()=>({id:uid(),nome:"",ruolo:"",fazione:"",dove:"",atteggiamento:"Neutrale",stato:"Vivo",note:""}),
+  fazioni:()=>({id:uid(),nome:"",capo:"",base:"",obiettivo:"",rapporto:"Neutrale",note:""}),
+  missioni:()=>({id:uid(),titolo:"",stato:"Aperta",committente:"",dove:"",ricompensa:"",note:""})
+};
+function normCamp(d){
+  const c=newCamp();
+  if(!d||typeof d!=="object") return c;
+  Object.assign(c.info,d.info||{});
+  Object.assign(c.compagnia,d.compagnia||{});
+  c.compagnia.monete=Object.assign(newCamp().compagnia.monete,d.compagnia?.monete||{});
+  for(const k of Object.keys(NUOVO)) c[k]=(Array.isArray(d[k])?d[k]:[]).map(o=>{
+    const base=NUOVO[k](), x=Object.assign(base,o);
+    if(k==="pg"){ x.ts=Object.assign({morte:"",bacchette:"",paralisi:"",soffio:"",incantesimi:""},o.ts||{});
+                  x.monete=Object.assign({mp:0,mo:0,me:0,ma:0,mr:0},o.monete||{}); x.cond=Array.isArray(o.cond)?o.cond:[]; }
+    return x;
+  });
+  return c;
+}
+let camp = normCamp(load("hexdm:campagna"));
+const saveCamp = () => store("hexdm:campagna",camp);
+
+function getPath(o,p){ return p.split(".").reduce((a,k)=>a==null?a:a[k],o); }
+function setPath(o,p,v){ const ks=p.split("."), last=ks.pop(); ks.reduce((a,k)=>a[k],o)[last]=v; }
+
+function hpInfo(c){
+  const max=+c.pfMax||0, pf=c.pf===""||c.pf==null?max:+c.pf||0, soglia=+camp.info.sogliaMorte||0;
+  const pct=max?Math.max(0,Math.min(100,Math.round(pf/max*100))):0;
+  const dead=c.stato==="Morto"||(max>0&&pf<=soglia);
+  const label=dead?"Morto":(max>0&&pf<=0)?"A terra":(max&&pct<=25)?"Grave":"";
+  const col=dead||pct<=25?"#e5484d":pct<=50?"#f2c230":"#3fb36b";
+  return {max,pf,pct,dead,label,col};
+}
+const barHTML = c => { const h=hpInfo(c);
+  return `<div class="hp" style="--hc:${h.col}"><i style="width:${h.pct}%"></i></div><span class="pmeta">${h.pf}/${h.max} PF${h.label?" · "+h.label:""}</span>`; };
+function changeHp(o,delta){
+  const h=hpInfo(o), low=Math.min(0,+camp.info.sogliaMorte||0);
+  o.pf=Math.max(low,h.max?Math.min(h.max,h.pf+delta):h.pf+delta);
+}
+
+/* ============ CAMPAGNA: PAGINA PRINCIPALE ============ */
+function renderCampSummary(){
+  $("#sCamp").textContent=camp.info.nome||"Senza nome";
+  $("#sSess").textContent=(camp.info.sistema||"")+(camp.info.sessione?" · sessione "+camp.info.sessione:"");
+  const row=(c,k)=>{
+    const h=hpInfo(c), lab=c.nome||"Senza nome";
+    const sub=k==="pg" ? [c.classe,c.livello?"L"+c.livello:"",c.giocatore?"("+c.giocatore+")":""]
+                       : [c.tipo,c.classe,c.livello?"L"+c.livello:"","morale "+c.morale];
+    const cond=[...(c.cond||[]),c.condNote||""].filter(Boolean).join(" · ");
+    return `<div class="prow${h.dead?" dead":""}">
+      <div><button class="pname" data-open="${k}" data-id="${c.id}">${esc(lab)}</button>
+        <span class="pmeta">${esc(sub.filter(Boolean).join(" "))} · CA ${esc(c.ca)}${k==="pg"?" · THAC0 "+esc(c.thac0):""}</span></div>
+      <div class="hpbtns"><span class="hpt">${h.pf}/${h.max}</span>
+        <button data-hp="${k}|${c.id}|-1" aria-label="Danno a ${esc(lab)}">−</button>
+        <button data-hp="${k}|${c.id}|1" aria-label="Cura ${esc(lab)}">+</button></div>
+      <div class="hp" style="--hc:${h.col}" title="${h.label||h.pct+"%"}"><i style="width:${h.pct}%"></i></div>
+      ${cond||h.label?`<div class="pcond">${esc([h.label,cond].filter(Boolean).join(" · "))}</div>`:""}
+    </div>`;
+  };
+  const pgs=camp.pg.filter(p=>p.stato==="Attivo"||p.stato==="Morto"), segs=camp.seguaci.filter(s=>s.stato==="Attivo");
+  const c=camp.compagnia;
+  $("#party").innerHTML=(pgs.length||segs.length)
+    ? pgs.map(p=>row(p,"pg")).join("")+(segs.length?`<div class="psec">Seguaci e mercenari</div>`+segs.map(s=>row(s,"seguaci")).join(""):"")
+      +`<div class="dung"><span class="pmeta">Dungeon: turno <b>${+c.turni||0}</b> · luce <b>${+c.luce||0}</b> turni · torce ${+c.torce||0} · olio ${+c.olio||0} · razioni ${+c.razioni||0}</span><span class="sp"></span>
+        <button data-turn="torcia">Torcia</button><button data-turn="1">+1 turno</button></div>`
+    : `<p class="muted" style="margin:0">Nessun personaggio. <button data-open="pg">Crea il party</button></p>`;
+}
+$("#partyCard").addEventListener("click",e=>{
+  const hp=e.target.closest("[data-hp]");
+  if(hp){
+    const [k,id,s]=hp.dataset.hp.split("|"), o=camp[k].find(x=>x.id===id); if(!o) return;
+    changeHp(o,(+s)*Math.max(1,+$("#hpAmt").value||1)); saveCamp(); renderCampSummary(); return;
+  }
+  const op=e.target.closest("[data-open]"); if(op){ openCfg(op.dataset.open,op.dataset.id); return; }
+  const t=e.target.closest("[data-turn]"); if(t){ t.dataset.turn==="1"?dungeonTurn():light("torcia"); }
+});
+
+/* ============ CAMPAGNA: AZIONI DI GIOCO ============ */
+function light(kind){
+  const c=camp.compagnia, k=kind==="torcia"?"torce":"olio", n=kind==="torcia"?6:24;
+  if((+c[k]||0)<=0){ toast(kind==="torcia"?"Non avete più torce":"Non avete più olio"); return; }
+  c[k]=(+c[k])-1; c.luce=n; saveCamp(); renderCampSummary(); refreshCfg();
+  toast((kind==="torcia"?"Torcia accesa":"Lanterna accesa")+": "+n+" turni di luce");
+}
+function dungeonTurn(){
+  const c=camp.compagnia; c.turni=(+c.turni||0)+1;
+  const note=[];
+  if(+c.luce>0){ c.luce=+c.luce-1; note.push(c.luce?"Luce: "+c.luce+" turni rimasti.":"La luce si spegne!"); }
+  else note.push("Il party è al buio.");
+  if(c.turni%2===0){
+    const d=d6(), tid=tableFor("incontri",cur());
+    note.push(d===1?"Mostro errante (d6 1): "+(tid?roll(tid):"tabella mancante"):"Nessun mostro errante (d6 "+d+").");
+  }
+  if(c.turni%6===0) note.push("Sesto turno: il party deve riposare un turno.");
+  saveCamp(); refreshCfg();
+  show("party","Turno "+c.turni+" nel dungeon (10 minuti)",note.join(" "));
+}
+function pxPlan(){
+  const m=+($("#pxM")?.value)||0, t=camp.info.pxOro?(+($("#pxT")?.value)||0):0, tot=m+t;
+  const pgs=camp.pg.filter(p=>p.stato==="Attivo"), segs=$("#pxS")?.checked?camp.seguaci.filter(s=>s.stato==="Attivo"):[];
+  const shares=pgs.length+segs.length/2;
+  if(!tot||!shares) return null;
+  const q=tot/shares;
+  return {tot,q,list:[...pgs.map(p=>({o:p,bon:pxBonus(p),gain:Math.floor(q*(1+pxBonus(p)/100))})),
+                     ...segs.map(s=>({o:s,bon:0,gain:Math.floor(q/2),seg:true}))]};
+}
+function pxPreview(){
+  const el=$("#pxPrev"); if(!el) return;
+  const pl=pxPlan();
+  if(!pl){ el.innerHTML=`<span class="pmeta">Inserisci i PX: vengono divisi tra i PG attivi, mezza quota ai seguaci, con il bonus del requisito primario.</span>`; return; }
+  el.innerHTML=`Totale <b>${pl.tot.toLocaleString("it")}</b> PX · quota piena ${Math.floor(pl.q).toLocaleString("it")}<ul>`+pl.list.map(x=>{
+    const after=(+x.o.px||0)+x.gain, n=x.seg?null:nextPx(x.o), up=n!=null&&after>=n;
+    return `<li>${esc(x.o.nome||"Senza nome")}: <b>+${x.gain.toLocaleString("it")}</b>${x.bon?` (bonus ${x.bon>0?"+":""}${x.bon}%)`:""}${x.seg?" (mezza quota)":""} → ${after.toLocaleString("it")}${up?' <span class="up">sale di livello!</span>':""}</li>`;
+  }).join("")+"</ul>";
+}
+function pxAssign(){
+  const pl=pxPlan(); if(!pl){ toast("Niente da assegnare"); return; }
+  const righe=pl.list.map(x=>{
+    x.o.px=(+x.o.px||0)+x.gain;
+    const n=x.seg?null:nextPx(x.o);
+    return (x.o.nome||"Senza nome")+" +"+x.gain+(n!=null&&x.o.px>=n?" (sale di livello!)":"");
+  });
+  saveCamp(); show("party","PX distribuiti: "+pl.tot,righe.join(" · ")); renderCfg(true);
+}
+function restDay(){
+  const righe=[];
+  for(const o of [...camp.pg.filter(p=>p.stato==="Attivo"),...camp.seguaci.filter(s=>s.stato==="Attivo")]){
+    const h=hpInfo(o); if(!h.max||h.dead) continue;
+    if(h.pf>=h.max) continue;
+    const g=dice(1,3), prima=h.pf; changeHp(o,g); righe.push((o.nome||"Senza nome")+" +"+(o.pf-prima)+" ("+o.pf+"/"+h.max+")");
+  }
+  saveCamp(); show("party","Giorno di riposo completo",righe.join(" · ")||"Tutti sono già in piena forma."); refreshCfg();
+}
+function initiative(){
+  const a=d6(), b=d6();
+  show("party","Iniziativa di gruppo","Party "+a+" · Avversari "+b+" → "+(a>b?"agisce prima il party":b>a?"agiscono prima gli avversari":"simultanea"));
+}
+function reaction(){
+  const p=camp.pg.find(x=>x.id===$("#rxWho")?.value), mod=p?modOf(p.CAR)||0:0, a=d6(), b=d6(), t=a+b+mod;
+  const esito=t<=2?"Ostile, attacca subito":t<=5?"Ostile, potrebbe attaccare":t<=8?"Incerto, confuso":t<=11?"Indifferente, ascolta offerte":"Amichevole, disponibile";
+  show("party","Reazione (2d6 "+a+"+"+b+(mod?(mod>0?"+":"")+mod:"")+" = "+t+")",esito+(p?" · parla "+(p.nome||"Senza nome"):""));
+}
+function morale(){
+  const s=camp.seguaci.find(x=>x.id===$("#moWho")?.value), m=+($("#moVal")?.value)||7, t=dice(2,6);
+  const chi=s?(s.nome||"Seguace"):"Avversari";
+  const esito=m>=12?"Morale 12: non cede mai":m<=2?"Morale 2: non combatte":t>m?"Fallita: fugge o si arrende":"Superata: resta e combatte";
+  show("party","Morale di "+chi+" (2d6 "+t+" contro "+m+")",esito);
+}
+
+/* ============ CAMPAGNA: CONFIGURATORE ============ */
+const TABS=[["campagna","Campagna"],["pg","Personaggi"],["seguaci","Seguaci"],["compagnia","Compagnia"],["png","PNG e fazioni"],["missioni","Missioni"],["strumenti","Strumenti"]];
+let cfgTab="campagna", cfgSel=0;
+
+function F(path,label,o={}){
+  const v=getPath(camp,path), val=v??"", cls=o.cls||"";
+  if(o.type==="check") return `<label class="f chk ${cls}"><input type="checkbox" data-p="${path}"${val?" checked":""}><span>${esc(label)}</span></label>`;
+  let inp;
+  if(o.type==="select"){
+    const opts=o.opts.map(x=>Array.isArray(x)?x:[x,x]);
+    if(val!==""&&!opts.some(x=>String(x[0])===String(val))) opts.unshift([val,val]);
+    inp=`<select data-p="${path}">${opts.map(([k,l])=>`<option value="${esc(k)}"${String(k)===String(val)?" selected":""}>${esc(l)}</option>`).join("")}</select>`;
+  } else if(o.type==="area") inp=`<textarea data-p="${path}" rows="${o.rows||3}" placeholder="${esc(o.ph||"")}">${esc(val)}</textarea>`;
+  else inp=`<input data-p="${path}" type="${o.type||"text"}" value="${esc(val)}"${o.list?` list="${o.list}"`:""}${o.ph?` placeholder="${esc(o.ph)}"`:""}${o.type==="number"?' inputmode="numeric"':""}>`;
+  return `<label class="f ${cls}"><span>${esc(label)}</span>${inp}</label>`;
+}
+const fs = (title,inner) => `<fieldset><legend>${esc(title)}</legend><div class="fg">${inner}</div></fieldset>`;
+const coins = base => MONETE.map(([k,l])=>F(base+"."+k,l,{type:"number"})).join("");
+
+function tabCampagna(){
+  return fs("Campagna",
+      F("info.nome","Nome della campagna",{cls:"w2"})+F("info.sistema","Regolamento",{list:"dlSistemi"})+F("info.master","Master")
+     +F("info.ambientazione","Ambientazione",{cls:"w2",ph:"es. Le Marche Grigie, regno di Veth"})+F("info.sessione","Sessione n°",{type:"number"})
+     +F("info.dataMondo","Data nel mondo",{ph:"es. 3 di Fiormese, 1072"})+F("info.inizio","Inizio campagna",{type:"date"})+F("info.prossima","Prossima sessione",{type:"date"}))
+   +fs("Regole della tavola",
+      F("info.pxOro","PX per tesoro (1 mo = 1 PX)",{type:"check",cls:"w2"})+F("info.sogliaMorte","Morte a PF ≤",{type:"number"})
+     +F("info.iniziativa","Iniziativa",{type:"select",opts:["Di gruppo (d6)","Individuale (d6 + DES)","Per fase di combattimento"]})
+     +F("info.ingombro","Ingombro",{type:"select",opts:["Base (armatura + tesoro)","Dettagliato (peso in monete)","Nessuno"]})
+     +F("info.regole","Regole della casa",{type:"area",cls:"full",rows:4,ph:"Tiri critici, morte e smembramento, rianimazione, ricerca di incantesimi…"}))
+   +fs("Note del master",F("info.note","Segreti e linee temporali",{type:"area",cls:"full",rows:7,ph:"Cosa succede se i PG non intervengono, verità nascoste, orologi delle fazioni…"}));
+}
+
+function pgListHTML(){
+  return camp.pg.map((p,i)=>`<button class="pgitem" data-act="sel" data-i="${i}" aria-current="${i===cfgSel}">
+    <b>${esc(p.nome||"Senza nome")}</b><span class="pmeta">${esc([p.classe,"L"+(p.livello||1),p.giocatore,p.stato!=="Attivo"?p.stato:""].filter(Boolean).join(" · "))}</span>
+    ${barHTML(p)}</button>`).join("");
+}
+function tabPG(){
+  if(!camp.pg.length) return `<div class="empty"><p>Nessun personaggio nel party.</p><button data-act="add" data-k="pg">Crea il primo personaggio</button></div>`;
+  cfgSel=Math.max(0,Math.min(cfgSel,camp.pg.length-1));
+  const i=cfgSel, p=camp.pg[i], b="pg."+i+".", d=(k,extra="")=>`data-d="${k}" data-k="pg" data-i="${i}"${extra}`;
+  return `<div class="pgwrap">
+  <div class="pgside"><div class="pglist" id="pglist">${pgListHTML()}</div><button data-act="add" data-k="pg">+ Aggiungi personaggio</button></div>
+  <div>
+    <div class="pghead"><b ${d("title",' data-f="nome"')}>${esc(p.nome||"Senza nome")}</b>
+      <button data-act="dup" data-i="${i}">Duplica</button><button data-act="del" data-k="pg" data-i="${i}">Elimina</button></div>
+    ${fs("Identità",
+        F(b+"nome","Nome")+F(b+"giocatore","Giocatore")+F(b+"classe","Classe",{list:"dlClassi"})+F(b+"razza","Razza",{list:"dlRazze"})
+       +F(b+"allineamento","Allineamento",{list:"dlAll"})+F(b+"stato","Stato",{type:"select",opts:["Attivo","Assente","Ritirato","Morto"]})
+       +F(b+"livello","Livello",{type:"number"})+F(b+"px","PX",{type:"number"})
+       +F(b+"pxBonus","Bonus PX % (vuoto = auto)",{type:"number"})
+       +`<div class="der f w2"><span ${d("bonus")}>${bonusText(p)}</span><b ${d("next")}>${esc(nextText(p))}</b></div>`)}
+    ${fs("Combattimento",
+        F(b+"pf","PF attuali",{type:"number"})+F(b+"pfMax","PF massimi",{type:"number"})+F(b+"dv","Dado vita")
+       +F(b+"ca","Classe armatura",{type:"number"})+F(b+"thac0","THAC0",{type:"number"})+F(b+"mov","Movimento")
+       +F(b+"armatura","Armatura e scudo",{cls:"w2"})+F(b+"armi","Armi (danni)",{cls:"w2"})
+       +`<div class="itembar" ${d("hp")}>${barHTML(p)}</div>`
+       +`<div class="row"><button data-act="rhp" data-i="${i}">Tira PF (DV × livello + COS)</button><button data-act="cls" data-i="${i}">Valori da classe B/X: TS, THAC0, DV</button></div>`)}
+    <fieldset><legend>Caratteristiche</legend><div class="abil">${ABIL.map(a=>`<label class="f"><span>${a}</span><input data-p="${b+a}" type="number" inputmode="numeric" min="3" max="18" value="${esc(p[a])}"><em class="mod" ${d("mod",` data-a="${a}"`)}>${fmtMod(modOf(p[a]))}</em></label>`).join("")}</div>
+      <div class="row"><button data-act="r3d6" data-i="${i}">Tira 3d6 in ordine</button></div></fieldset>
+    ${fs("Tiri salvezza",TS.map(([k,l])=>F(b+"ts."+k,l,{type:"number"})).join(""))}
+    <fieldset><legend>Condizioni</legend><div class="chips">${COND.map(c=>`<button class="chip" data-act="cond" data-i="${i}" data-c="${esc(c)}" aria-pressed="${p.cond.includes(c)}">${esc(c)}</button>`).join("")}</div>
+      <div class="fg" style="margin-top:10px">${F(b+"condNote","Altri effetti in corso",{cls:"full",ph:"es. benedizione fino al turno 8, −1 FOR per 3 giorni"})}</div></fieldset>
+    ${fs("Abilità e magia",
+        F(b+"abilita","Abilità di classe",{type:"area",cls:"full",ph:"Scacciare non morti, % abilità da ladro, infravisione, rilevare porte segrete…"})
+       +F(b+"incantesimi","Incantesimi (libro e memorizzati)",{type:"area",cls:"full"})+F(b+"lingue","Lingue",{cls:"full"}))}
+    ${fs("Equipaggiamento e ricchezze",
+        F(b+"equip","Zaino ed equipaggiamento",{type:"area",cls:"full",rows:4})+F(b+"ingombro","Ingombro",{cls:"w2",ph:"es. Leggero · 90' (30')"})+coins(b+"monete"))}
+    ${fs("Note",F(b+"note","Storia, legami, debiti, segreti",{type:"area",cls:"full",rows:4}))}
+  </div></div>`;
+}
+function bonusText(p){ const v=pxBonus(p); return "Bonus PX "+(v>0?"+":"")+v+"%"+(p.pxBonus===""||p.pxBonus==null?" (auto)":""); }
+
+function itemsHTML(key,title,fields,tf="nome"){
+  const arr=camp[key];
+  return `<div class="sechead"><b>${esc(title)}</b><button data-act="add" data-k="${key}">Aggiungi</button></div>`
+    +(arr.length?arr.map((o,i)=>`<div class="item" id="it-${o.id}"><div class="itemhead"><b data-d="title" data-k="${key}" data-i="${i}" data-f="${tf}">${esc(o[tf]||"Senza nome")}</b>
+      <button data-act="del" data-k="${key}" data-i="${i}">Elimina</button></div><div class="fg">${fields(key+"."+i+".",o,i)}</div></div>`).join("")
+     :`<p class="muted">Nessuna voce.</p>`);
+}
+function tabSeguaci(){
+  const padroni=[["","—"],...camp.pg.map(p=>[p.id,p.nome||"Senza nome"])];
+  return itemsHTML("seguaci","Seguaci, mercenari e specialisti",(b,o,i)=>
+      F(b+"nome","Nome")+F(b+"tipo","Tipo",{type:"select",opts:["Seguace","Mercenario","Specialista","Animale"]})+F(b+"classe","Classe / mestiere",{list:"dlClassi"})
+     +F(b+"livello","Livello",{type:"number"})+F(b+"padrone","Al servizio di",{type:"select",opts:padroni})+F(b+"stato","Stato",{type:"select",opts:["Attivo","Congedato","Disertore","Morto"]})
+     +F(b+"pf","PF attuali",{type:"number"})+F(b+"pfMax","PF massimi",{type:"number"})+F(b+"ca","CA",{type:"number"})+F(b+"thac0","THAC0",{type:"number"})
+     +F(b+"morale","Morale (2–12)",{type:"number"})+F(b+"paga","Paga",{ph:"es. 1 mo al giorno + metà quota"})+F(b+"px","PX",{type:"number"})
+     +`<div class="itembar" data-d="hp" data-k="seguaci" data-i="${i}">${barHTML(o)}</div>`
+     +F(b+"equip","Equipaggiamento",{cls:"full"})+F(b+"note","Note",{type:"area",cls:"full",rows:2}));
+}
+function tabCompagnia(){
+  const c="compagnia.";
+  return fs("Esplorazione",
+      F(c+"marcia","Ordine di marcia",{type:"area",cls:"w2",ph:"1. Guerriero e nano\n2. Ladro (luce) e chierico\n3. Mago e mercenario"})
+     +F(c+"guardie","Turni di guardia",{type:"area",cls:"w2",ph:"1° turno: …\n2° turno: …"})
+     +F(c+"turni","Turni nel dungeon",{type:"number"})+F(c+"luce","Luce: turni rimasti",{type:"number"})
+     +`<div class="row"><button data-act="turn">+1 turno (10 min)</button><button data-act="torcia">Accendi torcia (6 turni)</button><button data-act="lanterna">Riempi lanterna (24 turni)</button><button data-act="turn0">Azzera turni</button></div>`)
+   +fs("Scorte",F(c+"torce","Torce",{type:"number"})+F(c+"olio","Fiasche d'olio",{type:"number"})+F(c+"razioni","Razioni (giorni)",{type:"number"})
+     +F(c+"acqua","Otri d'acqua",{type:"number"})+F(c+"animali","Animali e veicoli",{cls:"w2",ph:"2 muli, 1 carretto"}))
+   +fs("Tesoro comune",coins(c+"monete")+F(c+"gemme","Gemme e gioielli",{type:"area",cls:"w2"})+F(c+"magici","Oggetti magici non identificati",{type:"area",cls:"w2"}))
+   +fs("Note",F(c+"note","Note del party",{type:"area",cls:"full",rows:3,ph:"Basi, debiti, nemici giurati, mappe in possesso…"}));
+}
+function tabPNG(){
+  return itemsHTML("png","PNG",(b)=>
+      F(b+"nome","Nome")+F(b+"ruolo","Ruolo")+F(b+"fazione","Fazione",{list:"dlFaz"})+F(b+"dove","Dove (hex o luogo)")
+     +F(b+"atteggiamento","Verso il party",{type:"select",opts:["Ostile","Diffidente","Neutrale","Amichevole","Alleato"]})
+     +F(b+"stato","Stato",{type:"select",opts:["Vivo","Scomparso","Prigioniero","Morto"]})+F(b+"note","Note",{type:"area",cls:"full",rows:2}))
+   +`<datalist id="dlFaz">${camp.fazioni.map(f=>`<option>${esc(f.nome)}</option>`).join("")}</datalist>`
+   +itemsHTML("fazioni","Fazioni",(b)=>
+      F(b+"nome","Nome")+F(b+"capo","Capo")+F(b+"base","Base")+F(b+"rapporto","Verso il party",{type:"select",opts:["Ostile","Diffidente","Neutrale","Amichevole","Alleato"]})
+     +F(b+"obiettivo","Obiettivo e prossima mossa",{type:"area",cls:"full",rows:2})+F(b+"note","Note",{type:"area",cls:"full",rows:2}));
+}
+function tabMissioni(){
+  return itemsHTML("missioni","Missioni, agganci e voci",(b)=>
+      F(b+"titolo","Titolo",{cls:"w2"})+F(b+"stato","Stato",{type:"select",opts:["Aperta","In corso","Completata","Fallita","Abbandonata"]})
+     +F(b+"committente","Committente")+F(b+"dove","Dove (hex o luogo)")+F(b+"ricompensa","Ricompensa")
+     +F(b+"note","Dettagli e indizi",{type:"area",cls:"full",rows:3}),"titolo");
+}
+function tabStrumenti(){
+  const pgs=camp.pg.filter(p=>p.stato==="Attivo");
+  return `<fieldset id="tools"><legend>Distribuisci PX</legend><div class="fg">
+      <label class="f"><span>PX da mostri sconfitti</span><input id="pxM" type="number" inputmode="numeric" min="0" value=""></label>
+      <label class="f"><span>Tesoro recuperato (mo)</span><input id="pxT" type="number" inputmode="numeric" min="0" value=""${camp.info.pxOro?"":" disabled"}></label>
+      <label class="f chk"><input id="pxS" type="checkbox" checked><span>Seguaci a mezza quota</span></label></div>
+      <div id="pxPrev"></div><div class="row"><button data-act="pxgo">Assegna PX e registra</button></div></fieldset>
+    <fieldset><legend>Tiri rapidi (finiscono nel registro della sessione)</legend>
+      <div class="row"><button data-act="rest">Giorno di riposo: 1d3 PF a tutti</button><button data-act="init">Iniziativa di gruppo</button></div>
+      <div class="row"><label class="f"><span>Chi parla</span><select id="rxWho"><option value="">Nessun modificatore</option>${pgs.map(p=>`<option value="${p.id}">${esc(p.nome||"Senza nome")} (CAR ${fmtMod(modOf(p.CAR))})</option>`).join("")}</select></label><button data-act="react">Tiro reazione 2d6</button></div>
+      <div class="row"><label class="f"><span>Prova di morale per</span><select id="moWho"><option value="">Avversari</option>${camp.seguaci.filter(s=>s.stato==="Attivo").map(s=>`<option value="${s.id}">${esc(s.nome||"Seguace")}</option>`).join("")}</select></label>
+        <label class="f" style="flex-basis:90px"><span>Morale</span><input id="moVal" type="number" min="2" max="12" value="8"></label><button data-act="morale">Prova di morale</button></div>
+    </fieldset>`;
+}
+const RENDER={campagna:tabCampagna,pg:tabPG,seguaci:tabSeguaci,compagnia:tabCompagnia,png:tabPNG,missioni:tabMissioni,strumenti:tabStrumenti};
+
+function renderCfg(keepScroll){
+  const body=$("#cfgBody"), st=body.scrollTop;
+  $("#cfgTitle").textContent=camp.info.nome||"Campagna";
+  $("#cfgTabs").innerHTML=TABS.map(([k,l])=>`<button role="tab" data-act="tab" data-t="${k}" aria-selected="${k===cfgTab}">${l}</button>`).join("");
+  body.innerHTML=RENDER[cfgTab]();
+  body.scrollTop=keepScroll?st:0;
+  if(cfgTab==="strumenti") pxPreview();
+}
+function refreshCfg(){ if(!$("#cfg").hidden) renderCfg(true); }
+function refreshDerived(){
+  $("#cfgBody").querySelectorAll("[data-d]").forEach(el=>{
+    const o=camp[el.dataset.k]?.[+el.dataset.i]; if(!o) return;
+    switch(el.dataset.d){
+      case "mod": el.textContent=fmtMod(modOf(o[el.dataset.a])); break;
+      case "next": el.textContent=nextText(o); break;
+      case "bonus": el.textContent=bonusText(o); break;
+      case "hp": el.innerHTML=barHTML(o); break;
+      case "title": el.textContent=o[el.dataset.f]||"Senza nome"; break;
+    }
+  });
+  const l=$("#pglist"); if(l) l.innerHTML=pgListHTML();
+  $("#cfgTitle").textContent=camp.info.nome||"Campagna";
+  renderCampSummary();
+}
+function openCfg(tab,id){
+  if(tab) cfgTab=tab;
+  if(tab==="pg"&&id){ const i=camp.pg.findIndex(p=>p.id===id); if(i>=0) cfgSel=i; }
+  $("#cfg").hidden=false; renderCfg(false);
+  if(tab==="seguaci"&&id) $("#it-"+id)?.scrollIntoView({block:"start"});
+}
+function armed(btn){
+  if(btn.dataset.armed) return true;
+  const t=btn.textContent; btn.dataset.armed=1; btn.textContent="Sicuro? Clicca di nuovo";
+  setTimeout(()=>{ if(btn.isConnected){ delete btn.dataset.armed; btn.textContent=t; } },3000);
+  return false;
+}
+
+$("#cfg").addEventListener("input",e=>{
+  const el=e.target;
+  if(["pxM","pxT","pxS"].includes(el.id)){ pxPreview(); return; }
+  if(el.id==="moWho"){ const s=camp.seguaci.find(x=>x.id===el.value); if(s) $("#moVal").value=s.morale; return; }
+  const p=el.dataset.p; if(!p) return;
+  const v=el.type==="checkbox"?el.checked : el.type==="number"?(el.value===""?"":+el.value) : el.value;
+  setPath(camp,p,v); saveCamp(); refreshDerived();
+  if(p==="info.pxOro"&&$("#pxT")) $("#pxT").disabled=!v;
+});
+$("#cfg").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  const i=+b.dataset.i, k=b.dataset.k, p=camp.pg[i];
+  switch(b.dataset.act){
+    case "tab": cfgTab=b.dataset.t; renderCfg(false); return;
+    case "sel": cfgSel=i; renderCfg(false); return;
+    case "add": {
+      const o=NUOVO[k](); camp[k].push(o); saveCamp();
+      if(k==="pg") cfgSel=camp.pg.length-1;
+      renderCfg(k!=="pg"); renderCampSummary();
+      const el=k==="pg"?$("#cfgBody [data-p='pg."+cfgSel+".nome']"):$("#it-"+o.id+" input");
+      el?.scrollIntoView({block:"center"}); el?.focus(); return;
+    }
+    case "del":
+      if(!armed(b)) return;
+      camp[k].splice(i,1); saveCamp(); renderCfg(true); renderCampSummary(); toast("Eliminato"); return;
+    case "dup": {
+      const c=Object.assign(clone(p),{id:uid(),nome:(p.nome||"Senza nome")+" (copia)"});
+      camp.pg.splice(i+1,0,c); cfgSel=i+1; saveCamp(); renderCfg(false); renderCampSummary(); return;
+    }
+    case "cls":
+      if(!applyClass(p)){ toast("Tabelle disponibili solo per le classi B/X"); return; }
+      saveCamp(); renderCfg(true); renderCampSummary(); toast("TS, THAC0 e DV da "+p.classe+" L"+(p.livello||1)); return;
+    case "r3d6":
+      if(ABIL.some(a=>p[a]!=="")&&!armed(b)) return;
+      ABIL.forEach(a=>p[a]=dice(3,6)); saveCamp(); renderCfg(true); renderCampSummary(); return;
+    case "rhp": {
+      const s=+String(p.dv).replace(/\D/g,"")||CLASSI[p.classe]?.dv;
+      if(!s){ toast("Indica il dado vita, es. d8"); return; }
+      if(+p.pfMax>0&&!armed(b)) return;
+      const cm=modOf(p.COS)||0; let t=0;
+      for(let n=0;n<Math.min(9,Math.max(1,+p.livello||1));n++) t+=Math.max(1,dice(1,s)+cm);
+      p.pfMax=t; p.pf=t; saveCamp(); renderCfg(true); renderCampSummary(); toast("PF: "+t); return;
+    }
+    case "cond": {
+      const c=b.dataset.c, on=!p.cond.includes(c);
+      p.cond=on?[...p.cond,c]:p.cond.filter(x=>x!==c);
+      b.setAttribute("aria-pressed",on); saveCamp(); renderCampSummary(); return;
+    }
+    case "turn": dungeonTurn(); return;
+    case "torcia": light("torcia"); return;
+    case "lanterna": light("lanterna"); return;
+    case "turn0": camp.compagnia.turni=0; saveCamp(); renderCfg(true); renderCampSummary(); return;
+    case "pxgo": pxAssign(); return;
+    case "rest": restDay(); return;
+    case "init": initiative(); toast("Iniziativa nel registro"); return;
+    case "react": reaction(); toast("Reazione nel registro"); return;
+    case "morale": morale(); toast("Morale nel registro"); return;
+    case "exp": {
+      const blob=new Blob([JSON.stringify(camp,null,1)],{type:"application/json"}), a=document.createElement("a");
+      a.href=URL.createObjectURL(blob); a.download="campagna-"+(camp.info.nome||"senza-nome").toLowerCase().replace(/[^a-z0-9]+/g,"-")+".json";
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); return;
+    }
+    case "newcamp":
+      if(!armed(b)) return;
+      camp=newCamp(); saveCamp(); cfgTab="campagna"; cfgSel=0; renderCfg(false); renderCampSummary(); toast("Nuova campagna"); return;
+  }
+});
+$("#cfgFile").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{ const d=JSON.parse(r.result); if(!d.info) throw 0; camp=normCamp(d); saveCamp(); cfgSel=0; renderCfg(false); renderCampSummary(); toast("Campagna importata"); }
+    catch(err){ toast("File non valido: serve un JSON esportato da qui"); }
+    e.target.value="";
+  };
+  r.readAsText(f);
+});
+$("#cfgClose").addEventListener("click",()=>$("#cfg").hidden=true);
+$("#bCfg").addEventListener("click",()=>openCfg());
+$("#bCfg2").addEventListener("click",()=>openCfg());
 
 /* ============ AVVIO ============ */
 data = load("hexdm:dati") || clone(DEFAULT_DATA);
