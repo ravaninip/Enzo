@@ -74,12 +74,20 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
 
 /* ---- Compagnia (pagina principale) ---- */
 .party{display:grid;gap:12px}
-.prow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+.prow{display:grid;gap:5px}
+.ptop{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
+.rrow{display:grid;grid-template-columns:minmax(52px,auto) minmax(0,1fr) auto auto;gap:8px;align-items:center}
+.rrow .rl{font-size:12.5px;font-weight:600}
+.rrow .hp{grid-column:auto}
+.rrow.sec .rl{font-weight:400;color:var(--muted)}
+.rrow.sec .hp{height:7px}
+.rrow.sec .hpt{font-size:12.5px;font-weight:400}
 .prow.dead{opacity:.55}
 .pname{font:600 16px var(--serif);background:none;border:0;padding:0;text-align:left;color:var(--ink)}
 .pname:hover{text-decoration:underline}
 .pmeta{font-size:12px;color:var(--muted)}
 .hpbtns{display:flex;gap:4px;align-items:center}
+.rrow.sec .hpbtns button{padding:2px 0}
 .hpbtns button{padding:4px 0;width:34px}
 .hpt{font:600 14px var(--ui);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
 .hp{grid-column:1/-1;height:12px;background:var(--padoff);border-radius:6px;overflow:hidden}
@@ -94,6 +102,7 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
 .cfg{grid-template-columns:minmax(0,1fr)}
 .cfg .box{width:min(1120px,100%);min-width:0;height:92vh;max-height:none;padding:0;gap:0}
 .cfghead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 16px}
+.cfgname{display:flex;flex-direction:column;flex:1 1 220px;min-width:0}
 .cfghead b{font:600 17px var(--serif)}
 .cfghead .sp{flex:1}
 .filebtn{position:relative;overflow:hidden;font:600 13px var(--ui);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
@@ -128,7 +137,7 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
 .pgitem[aria-current="true"]{border-color:#6cc0f5;background:color-mix(in srgb,#6cc0f5 10%,var(--panel))}
 .pghead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .pghead b{flex:1;font:600 22px var(--serif);min-width:0;overflow-wrap:anywhere}
-.abil{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.abil{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
 .abil input{text-align:center;font:600 18px var(--serif)}
 .abil .mod{font-style:normal;font-size:12px;color:var(--muted);text-align:center}
 .der{font-size:13px;color:var(--muted);align-self:end;padding-bottom:8px}
@@ -148,11 +157,12 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
 #pxPrev{font-size:13.5px;color:var(--ink);margin-top:10px}
 #pxPrev ul{margin:6px 0 0;padding-left:18px}
 .up{color:#3fb36b;font-weight:600}
+.pill{font:600 11px var(--ui);background:#3fb36b;color:#10161c;border-radius:999px;padding:2px 8px;vertical-align:3px}
+.fileline{margin:0;font-size:13.5px}
 @media (max-width:760px){
   .pgwrap{grid-template-columns:minmax(0,1fr)}
   .pgside{position:static}
   .f.w2{grid-column:auto}
-  .abil{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 </style>
 </head>
@@ -163,6 +173,7 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
   <div class="stat"><span class="k">Tempo</span><b id="sTime">–</b></div>
   <div class="stat wide"><span class="k">Meteo</span><b id="sMeteo">–</b></div>
   <div class="stat"><span class="k">Campagna</span><b id="sCamp">–</b><span class="sub" id="sSess"></span></div>
+  <button id="bFile" hidden>Riattiva il file della campagna</button>
   <button id="bCfg">Campagna e party</button>
   <button id="bData">Dati e tabelle</button>
 </header>
@@ -185,7 +196,7 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
     <article class="result" id="result"></article>
     <div class="card" id="partyCard">
       <div class="padhead"><b>Compagnia</b>
-        <span class="row"><label class="pmeta">PF per clic <input id="hpAmt" class="amt" type="number" min="1" value="1"></label><button id="bCfg2">Configura</button></span>
+        <span class="row"><label class="pmeta">Passo −/+ <input id="hpAmt" class="amt" type="number" min="1" value="1"></label><button id="bCfg2">Configura</button></span>
       </div>
       <div class="party" id="party"></div>
     </div>
@@ -196,7 +207,7 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
 <div class="panel" id="panel" hidden>
   <div class="box" role="dialog" aria-label="Dati e tabelle">
     <div class="row"><b>Dati del mondo (JSON)</b><span class="sp"></span><button id="bClose">Chiudi</button></div>
-    <p>Mappa, regioni, sottoregioni e tabelle in un unico file. Le voci possono essere testo semplice oppure <code>{"peso":3,"testo":"…"}</code>. Rimandi: <code>[[tabella:id]]</code>. Dadi: <code>{2d6+1}</code>.</p>
+    <p>Mappa, regioni, sottoregioni e tabelle della campagna aperta. Le voci possono essere testo semplice oppure <code>{"peso":3,"testo":"…"}</code>. Rimandi: <code>[[tabella:id]]</code>. Dadi: <code>{2d6+1}</code>.</p>
     <textarea id="json" spellcheck="false"></textarea>
     <div id="err"></div>
     <div class="row">
@@ -212,10 +223,11 @@ h2{font:600 14px var(--ui);margin:0 0 8px;color:var(--muted)}
 <div class="panel cfg" id="cfg" hidden>
   <div class="box" role="dialog" aria-label="Campagna e party">
     <div class="cfghead">
-      <b id="cfgTitle">Campagna</b><span class="sp"></span>
-      <button data-act="exp">Esporta campagna</button>
-      <label class="filebtn">Importa campagna<input type="file" id="cfgFile" accept=".json,application/json"></label>
-      <button data-act="newcamp">Nuova campagna</button>
+      <div class="cfgname"><b id="cfgTitle">Campagna</b><span class="pmeta" id="fileSt"></span></div>
+      <button data-act="tab" data-t="campagne">Cambia campagna</button>
+      <button data-act="fsave">Salva su file</button>
+      <button data-act="fopen">Apri file…</button>
+      <input type="file" id="cfgFile" accept=".json,application/json" hidden>
       <button id="cfgClose">Chiudi</button>
     </div>
     <nav class="tabs" id="cfgTabs" role="tablist"></nav>
@@ -428,7 +440,7 @@ function show(cat,label,text,meta){
   const entry = {quando:"G"+state.giorno+" · "+FASCE[state.fascia],dove:h.id,cat,label,testo:text,
                  meta:meta||(h.id+" · "+h.sub.nome)};
   state.ultimo=entry; state.log.unshift(entry); state.log=state.log.slice(0,200);
-  store("hexdm:stato",state); render(true);
+  saveCamp(); render(true);
 }
 function gen(slot){
   const tid=tableFor(slot,cur());
@@ -529,7 +541,7 @@ function renderMap(){
 }
 $("#map").addEventListener("click",e=>{
   const p=e.target.closest("polygon"); if(!p) return;
-  state.pos=p.dataset.id; store("hexdm:stato",state); render(false);
+  state.pos=p.dataset.id; saveCamp(); render(false);
 });
 function render(fresh){
   const h=cur();
@@ -563,7 +575,7 @@ function applyData(txt){
     for(const k of ["mappa","regioni","sottoregioni","globale","tabelle"]) if(!d[k]) throw new Error("Manca la sezione «"+k+"»");
     data=d; build();
     if(!HEX[state.pos]) state.pos=HEX[data.mappa.inizio]?data.mappa.inizio:Object.keys(HEX)[0];
-    store("hexdm:dati",data); store("hexdm:stato",state);
+    saveCamp();
     $("#panel").hidden=true; render(false); toast("Dati applicati");
   }catch(e){ $("#err").textContent="Errore: "+e.message; }
 }
@@ -589,12 +601,38 @@ $("#file").addEventListener("change",e=>{
   const f=e.target.files[0]; if(!f) return;
   const r=new FileReader(); r.onload=()=>{ $("#json").value=r.result; applyData(r.result); }; r.readAsText(f);
 });
-confirmBtn($("#bResetS"),()=>{ state=freshState(); newWeather(true); store("hexdm:stato",state); $("#panel").hidden=true; render(false); toast("Nuova sessione"); });
+confirmBtn($("#bResetS"),()=>{ state=freshState(); newWeather(true); saveCamp(); $("#panel").hidden=true; render(false); toast("Nuova sessione"); });
 confirmBtn($("#bResetD"),()=>{ $("#json").value=JSON.stringify(DEFAULT_DATA,null,1); applyData($("#json").value); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ $("#panel").hidden=true; $("#cfg").hidden=true; } });
 
-/* ============ CAMPAGNA: REGOLE B/X ============ */
-// ts: [livello massimo, [Morte, Bacchette, Paralisi, Soffio, Incantesimi]]  ·  thac0: [livello massimo, THAC0]
+/* ============ SISTEMI DI GIOCO ============ */
+// Ogni campagna porta con sé il suo profilo: liste di caratteristiche, risorse con barra, statistiche, ecc.
+// I valori dei personaggi sono salvati per nome, quindi cambiare profilo non cancella nulla.
+const PRESET = {
+  bx:{nome:"D&D old school (B/X · OSE)",lbl:{classe:"Classe",razza:"Razza",livello:"Livello",px:"PX",allineamento:"Allineamento"},
+    car:["FOR","INT","SAG","DES","COS","CAR"],mod:"bx",tiroCar:"3d6",ris:["PF"],stat:["CA","THAC0","Movimento"],
+    ts:["Morte / veleno","Bacchette magiche","Paralisi / pietrificazione","Soffio del drago","Incantesimi / verghe / bastoni"],
+    cond:["Avvelenato","Paralizzato","Pietrificato","Malato","Maledetto","Affamato","Assetato","Esausto","Spaventato","Charmato","Cieco","Livello risucchiato"],
+    valute:["mp","mo","me","ma","mr"],oldschool:true},
+  d5e:{nome:"D&D 5e",lbl:{classe:"Classe",razza:"Specie",livello:"Livello",px:"PE",allineamento:"Allineamento"},
+    car:["FOR","DES","COS","INT","SAG","CAR"],mod:"d20",tiroCar:"4d6k3",ris:["PF","PF temporanei","Dadi vita"],
+    stat:["CA","Iniziativa","Velocità","Bonus competenza","Percezione passiva"],ts:["Forza","Destrezza","Costituzione","Intelligenza","Saggezza","Carisma"],
+    cond:["Accecato","Affascinato","Afferrato","Assordato","Avvelenato","Incapacitato","Invisibile","Paralizzato","Pietrificato","Prono","Spaventato","Stordito","Privo di sensi","Trattenuto","Indebolimento"],
+    valute:["mp","mo","me","ma","mr"],oldschool:false},
+  coc:{nome:"Il Richiamo di Cthulhu 7e",lbl:{classe:"Occupazione",razza:"Residenza",livello:"",px:"",allineamento:"Convinzioni"},
+    car:["FOR","COS","TAG","DES","FAS","INT","POT","IST"],mod:"coc",tiroCar:"3d6*5",ris:["PF","Sanità","Punti magia","Fortuna"],
+    stat:["Età","Movimento","Corporatura","Bonus danno","Schivare"],ts:[],
+    cond:["Ferita grave","Morente","Privo di sensi","Follia temporanea","Follia indefinita","Fobia","Mania"],valute:["$"],oldschool:false},
+  mb:{nome:"Mörk Borg",lbl:{classe:"Classe",razza:"Origine",livello:"",px:"",allineamento:""},
+    car:["Forza","Agilità","Presenza","Tenacia"],mod:"none",tiroCar:"",ris:["PF","Poteri","Omen"],stat:["Armatura"],ts:[],
+    cond:["Infetto","Avvelenato","Sanguinante","Accecato","Spaventato"],valute:["Argento"],oldschool:false},
+  gen:{nome:"Gioco generico",lbl:{classe:"Ruolo",razza:"Origine",livello:"Livello",px:"Esperienza",allineamento:"Motivazione"},
+    car:[],mod:"none",tiroCar:"",ris:["Salute"],stat:["Difesa"],ts:[],cond:["Ferito","Stanco","Spaventato"],valute:["Monete"],oldschool:false}
+};
+const MODS = [["bx","Old school (3 = −3 … 18 = +3)"],["d20","d20 moderno ((valore − 10) / 2)"],["coc","Percentuale (metà e quinto)"],["none","Nessuno"]];
+
+/* ============ REGOLE B/X (solo con gli strumenti old school) ============ */
+// ts: [livello massimo, valori nell'ordine dei tiri salvezza B/X]  ·  thac0: [livello massimo, THAC0]
 const CLASSI = {
   Chierico:{dv:6,req:["SAG"],px:[0,1500,3000,6000,12000,25000,50000,100000,200000,300000,400000,500000,600000,700000],
     ts:[[4,[11,12,14,16,15]],[8,[9,10,12,14,12]],[12,[6,7,9,11,9]],[14,[3,5,7,8,7]]],thac0:[[4,19],[8,17],[12,14],[14,12]]},
@@ -611,128 +649,335 @@ const CLASSI = {
   Halfling:{dv:6,req:["DES","FOR"],px:[0,2000,4000,8000,16000,32000,64000,120000],
     ts:[[3,[8,9,10,13,12]],[6,[6,7,8,10,10]],[8,[4,5,6,7,8]]],thac0:[[3,19],[6,17],[8,14]]}
 };
-const ABIL = ["FOR","INT","SAG","DES","COS","CAR"];
-const TS = [["morte","Morte / veleno"],["bacchette","Bacchette magiche"],["paralisi","Paralisi / pietrificazione"],["soffio","Soffio del drago"],["incantesimi","Incantesimi / verghe / bastoni"]];
-const COND = ["Avvelenato","Paralizzato","Pietrificato","Malato","Maledetto","Affamato","Assetato","Esausto","Spaventato","Charmato","Cieco","Livello risucchiato"];
-const MONETE = [["mp","mp"],["mo","mo"],["me","me"],["ma","ma"],["mr","mr"]];
-
-const modOf = s => s===""||s==null ? null : +s<=3?-3 : +s<=5?-2 : +s<=8?-1 : +s<=12?0 : +s<=15?1 : +s<=17?2 : 3;
+const bxMod = s => s===""||s==null||isNaN(+s) ? null : +s<=3?-3 : +s<=5?-2 : +s<=8?-1 : +s<=12?0 : +s<=15?1 : +s<=17?2 : 3;
 const fmtMod = m => m==null ? "–" : (m>0?"+":"")+m;
-const dice = (n,s) => { let t=0; for(let i=0;i<n;i++) t+=1+Math.floor(Math.random()*s); return t; };
+function modText(v){
+  if(v===""||v==null||isNaN(+v)) return camp.sistema.mod==="none"?"":"–";
+  switch(camp.sistema.mod){
+    case "bx": return fmtMod(bxMod(v));
+    case "d20": return fmtMod(Math.floor((+v-10)/2));
+    case "coc": return "½ "+Math.floor(+v/2)+" · ⅕ "+Math.floor(+v/5);
+    default: return "";
+  }
+}
 const uid = () => Math.random().toString(36).slice(2,9);
 const byLevel = (rows,lv) => (rows.find(r=>lv<=r[0])||rows[rows.length-1])[1];
+const oldschool = () => !!camp?.sistema?.oldschool;
+const primaria = () => camp.sistema.ris[0];
+
+// Dadi: "3d6", "4d6k3", "2d6+1d4+2", "1d100", "3d6*5"
+function rollExpr(expr){
+  const src=String(expr||"").replace(/\s+/g,"").toLowerCase();
+  const m=src.match(/^(.*?)(?:\*(\d+))?$/), body=m[1], mult=+m[2]||1;
+  if(!body||!/^([+-]?(\d*d\d+(k\d+)?|\d+))+$/.test(body)) return null;
+  let tot=0; const det=[];
+  for(const [,sg,t] of body.matchAll(/([+-]?)(\d*d\d+(?:k\d+)?|\d+)/g)){
+    const s=sg==="-"?-1:1, d=t.match(/^(\d*)d(\d+)(?:k(\d+))?$/);
+    if(!d){ tot+=s*+t; det.push(sg+t); continue; }
+    const n=Math.min(100,+d[1]||1), f=+d[2]||1, rs=Array.from({length:n},()=>1+Math.floor(Math.random()*f));
+    const keep=d[3]?[...rs].sort((a,b)=>b-a).slice(0,+d[3]):rs;
+    tot+=s*keep.reduce((a,b)=>a+b,0); det.push((sg||(det.length?"+":""))+"["+rs.join(",")+"]");
+  }
+  return {tot:tot*mult,det:det.join("")+(mult>1?"×"+mult:"")};
+}
+const dice = (n,s) => rollExpr(n+"d"+s).tot;
 
 function pxBonusAuto(p){
-  const c=CLASSI[p.classe]; if(!c) return 0;
-  const v=a=>+p[a]||0;
+  const c=oldschool()&&CLASSI[p.classe]; if(!c) return 0;
+  const v=a=>+p.car?.[a]||0;
   if(p.classe==="Elfo") return v("INT")>=16&&v("FOR")>=13?10 : v("INT")>=13&&v("FOR")>=13?5 : 0;
   if(p.classe==="Halfling") return v("DES")>=13&&v("FOR")>=13?10 : v("DES")>=13||v("FOR")>=13?5 : 0;
   const s=v(c.req[0]); if(!s) return 0;
   return s<=5?-20 : s<=8?-10 : s<=12?0 : s<=15?5 : 10;
 }
 const pxBonus = p => p.pxBonus===""||p.pxBonus==null ? pxBonusAuto(p) : +p.pxBonus;
-function nextPx(p){ const c=CLASSI[p.classe]; return c ? c.px[+p.livello||1] ?? null : null; }
+function nextPx(p){ const c=oldschool()&&CLASSI[p.classe]; return c ? c.px[+p.livello||1] ?? null : null; }
 function nextText(p){
-  const n=nextPx(p);
-  if(n==null) return CLASSI[p.classe] ? "Livello massimo" : "Classe libera: PX manuali";
-  const miss=n-(+p.px||0);
-  return miss<=0 ? "Pronto per il livello "+((+p.livello||1)+1)+"!" : "Livello "+((+p.livello||1)+1)+" a "+n.toLocaleString("it")+" PX (mancano "+miss.toLocaleString("it")+")";
+  const n=nextPx(p), L=camp.sistema.lbl;
+  if(n==null) return oldschool()&&CLASSI[p.classe] ? "Livello massimo" : "";
+  const miss=n-(+p.px||0), lv=(+p.livello||1)+1;
+  return miss<=0 ? "Pronto per il livello "+lv+"!" : "Livello "+lv+" a "+n.toLocaleString("it")+" "+L.px+" (mancano "+miss.toLocaleString("it")+")";
+}
+function bonusText(p){
+  if(!oldschool()) return "";
+  const v=pxBonus(p); return "Bonus "+camp.sistema.lbl.px+" "+(v>0?"+":"")+v+"%"+(p.pxBonus===""||p.pxBonus==null?" (auto)":"");
 }
 function applyClass(p){
-  const c=CLASSI[p.classe]; if(!c) return false;
-  const lv=Math.max(1,+p.livello||1), ts=byLevel(c.ts,lv);
-  TS.forEach(([k],i)=>p.ts[k]=ts[i]);
-  p.thac0=byLevel(c.thac0,lv); p.dv="d"+c.dv;
+  const c=CLASSI[p.classe], S=camp.sistema; if(!c) return false;
+  const lv=Math.max(1,+p.livello||1);
+  if(S.ts.length===5){ const v=byLevel(c.ts,lv); S.ts.forEach((k,i)=>p.ts[k]=v[i]); }
+  if(S.stat.includes("THAC0")) p.stat.THAC0=byLevel(c.thac0,lv);
+  p.dv="d"+c.dv;
   return true;
 }
 
 /* ============ CAMPAGNA: DATI ============ */
-function newCamp(){
-  return {v:1,
-    info:{nome:"Nuova campagna",sistema:"B/X · OSE",master:"",ambientazione:"",sessione:1,inizio:"",prossima:"",dataMondo:"",
-          pxOro:true,sogliaMorte:0,iniziativa:"Di gruppo (d6)",ingombro:"Base (armatura + tesoro)",regole:"",note:""},
+function newCamp(preset="bx"){
+  return {formato:"enzopad-campagna",versione:2,id:uid()+uid(),creata:Date.now(),modificata:Date.now(),
+    info:{nome:"Nuova campagna",master:"",ambientazione:"",sessione:1,inizio:"",prossima:"",dataMondo:"",pxOro:true,sogliaMorte:0,regole:"",note:""},
+    sistema:clone(PRESET[preset]||PRESET.gen),
     pg:[],seguaci:[],
-    compagnia:{marcia:"",guardie:"",turni:0,luce:0,torce:6,olio:0,razioni:7,acqua:1,animali:"",monete:{mp:0,mo:0,me:0,ma:0,mr:0},gemme:"",magici:"",note:""},
-    png:[],fazioni:[],missioni:[]};
+    compagnia:{marcia:"",guardie:"",turni:0,luce:0,torce:6,olio:0,razioni:7,acqua:1,animali:"",risorse:"",monete:{},gemme:"",magici:"",note:""},
+    png:[],fazioni:[],missioni:[],mondo:null,sessione:null};
 }
 const NUOVO = {
-  pg:()=>{ const p={id:uid(),nome:"",giocatore:"",classe:"Guerriero",razza:"Umano",allineamento:"Legge",stato:"Attivo",livello:1,px:0,pxBonus:"",
-    dv:"",pf:"",pfMax:"",ca:9,thac0:19,mov:"120' (40')",FOR:"",INT:"",SAG:"",DES:"",COS:"",CAR:"",
-    ts:{morte:"",bacchette:"",paralisi:"",soffio:"",incantesimi:""},cond:[],condNote:"",
-    armi:"",armatura:"",lingue:"Comune, allineamento",abilita:"",incantesimi:"",equip:"",ingombro:"",monete:{mp:0,mo:0,me:0,ma:0,mr:0},note:""};
-    applyClass(p); return p; },
-  seguaci:()=>({id:uid(),nome:"",tipo:"Seguace",classe:"",livello:1,pf:"",pfMax:"",ca:9,thac0:19,morale:7,paga:"",padrone:"",px:0,stato:"Attivo",equip:"",note:""}),
+  pg:()=>({id:uid(),nome:"",giocatore:"",classe:oldschool()?"Guerriero":"",razza:"",allineamento:"",stato:"Attivo",livello:1,px:0,pxBonus:"",dv:"",
+    car:{},ris:{},stat:{},ts:{},cond:[],condNote:"",armi:"",armatura:"",lingue:"",abilita:"",incantesimi:"",equip:"",ingombro:"",monete:{},note:""}),
+  seguaci:()=>({id:uid(),nome:"",tipo:"Seguace",classe:"",livello:1,ris:{},stat:{},morale:7,paga:"",padrone:"",px:0,stato:"Attivo",equip:"",note:""}),
   png:()=>({id:uid(),nome:"",ruolo:"",fazione:"",dove:"",atteggiamento:"Neutrale",stato:"Vivo",note:""}),
   fazioni:()=>({id:uid(),nome:"",capo:"",base:"",obiettivo:"",rapporto:"Neutrale",note:""}),
   missioni:()=>({id:uid(),titolo:"",stato:"Aperta",committente:"",dove:"",ricompensa:"",note:""})
 };
+function ensureChar(p,S){
+  for(const k of ["car","ris","stat","ts","monete"]) if(!p[k]||typeof p[k]!=="object") p[k]={};
+  if(!Array.isArray(p.cond)) p.cond=[];
+  S.car.forEach(n=>{ if(!(n in p.car)) p.car[n]=""; });
+  S.ris.forEach(n=>{ if(!p.ris[n]||typeof p.ris[n]!=="object") p.ris[n]={v:"",max:""}; });
+  S.stat.forEach(n=>{ if(!(n in p.stat)) p.stat[n]=""; });
+  S.ts.forEach(n=>{ if(!(n in p.ts)) p.ts[n]=""; });
+  S.valute.forEach(n=>{ if(!(n in p.monete)) p.monete[n]=0; });
+}
+function ensureAll(c){
+  for(const p of [...c.pg,...c.seguaci]) ensureChar(p,c.sistema);
+  if(!c.compagnia.monete||typeof c.compagnia.monete!=="object") c.compagnia.monete={};
+  c.sistema.valute.forEach(n=>{ if(!(n in c.compagnia.monete)) c.compagnia.monete[n]=0; });
+}
+// Schede della prima versione (campi D&D fissi) → struttura per nome
+function migrateChar(x){
+  if(x.car&&!("pf" in x)) return;
+  const tsOld=["morte","bacchette","paralisi","soffio","incantesimi"];
+  x.car=x.car||{}; ["FOR","INT","SAG","DES","COS","CAR"].forEach(a=>{ if(a in x){ x.car[a]=x[a]; delete x[a]; } });
+  x.ris={PF:{v:x.pf??"",max:x.pfMax??""}};
+  x.stat=Object.assign({},x.stat,{CA:x.ca??"",THAC0:x.thac0??""},x.mov!=null?{Movimento:x.mov}:{});
+  const ts={}; tsOld.forEach((k,i)=>{ if(x.ts&&k in x.ts) ts[PRESET.bx.ts[i]]=x.ts[k]; }); x.ts=ts;
+  ["pf","pfMax","ca","thac0","mov"].forEach(k=>delete x[k]);
+}
 function normCamp(d){
-  const c=newCamp();
-  if(!d||typeof d!=="object") return c;
-  Object.assign(c.info,d.info||{});
+  d=d&&typeof d==="object"?d:{};
+  const c=newCamp(d.sistema?"gen":"bx");
+  if(d.id) c.id=d.id;
+  c.creata=d.creata||c.creata; c.modificata=d.modificata||c.modificata;
+  Object.assign(c.info,d.info||{}); delete c.info.sistema; delete c.info.iniziativa; delete c.info.ingombro;
+  if(d.sistema&&typeof d.sistema==="object"){
+    c.sistema=Object.assign(c.sistema,d.sistema,{lbl:Object.assign(c.sistema.lbl,d.sistema.lbl||{})});
+    for(const k of ["car","ris","stat","ts","cond","valute"]) if(!Array.isArray(c.sistema[k])) c.sistema[k]=[];
+    if(!c.sistema.ris.length) c.sistema.ris=["Salute"];
+  }
   Object.assign(c.compagnia,d.compagnia||{});
-  c.compagnia.monete=Object.assign(newCamp().compagnia.monete,d.compagnia?.monete||{});
   for(const k of Object.keys(NUOVO)) c[k]=(Array.isArray(d[k])?d[k]:[]).map(o=>{
-    const base=NUOVO[k](), x=Object.assign(base,o);
-    if(k==="pg"){ x.ts=Object.assign({morte:"",bacchette:"",paralisi:"",soffio:"",incantesimi:""},o.ts||{});
-                  x.monete=Object.assign({mp:0,mo:0,me:0,ma:0,mr:0},o.monete||{}); x.cond=Array.isArray(o.cond)?o.cond:[]; }
+    const x=Object.assign(NUOVO[k](),clone(o));
+    if(k==="pg"||k==="seguaci") migrateChar(x);
     return x;
   });
+  c.mondo=d.mondo||null; c.sessione=d.sessione||null;
+  ensureAll(c);
   return c;
 }
-let camp = normCamp(load("hexdm:campagna"));
-const saveCamp = () => store("hexdm:campagna",camp);
 
-function getPath(o,p){ return p.split(".").reduce((a,k)=>a==null?a:a[k],o); }
-function setPath(o,p,v){ const ks=p.split("."), last=ks.pop(); ks.reduce((a,k)=>a[k],o)[last]=v; }
-
-function hpInfo(c){
-  const max=+c.pfMax||0, pf=c.pf===""||c.pf==null?max:+c.pf||0, soglia=+camp.info.sogliaMorte||0;
-  const pct=max?Math.max(0,Math.min(100,Math.round(pf/max*100))):0;
-  const dead=c.stato==="Morto"||(max>0&&pf<=soglia);
-  const label=dead?"Morto":(max>0&&pf<=0)?"A terra":(max&&pct<=25)?"Grave":"";
-  const col=dead||pct<=25?"#e5484d":pct<=50?"#f2c230":"#3fb36b";
-  return {max,pf,pct,dead,label,col};
+/* ============ CAMPAGNE: ARCHIVIO NEL BROWSER ============ */
+const LIB_KEY="enzo:lib", CK=id=>"enzo:camp:"+id;
+let lib, camp;
+function storeOk(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } }
+function saveCamp(){
+  camp.mondo=data; camp.sessione=state; camp.modificata=Date.now();
+  if(!storeOk(CK(camp.id),camp)) toast("Memoria del browser piena: salva la campagna su file");
+  scheduleFileSave();
 }
-const barHTML = c => { const h=hpInfo(c);
-  return `<div class="hp" style="--hc:${h.col}"><i style="width:${h.pct}%"></i></div><span class="pmeta">${h.pf}/${h.max} PF${h.label?" · "+h.label:""}</span>`; };
-function changeHp(o,delta){
-  const h=hpInfo(o), low=Math.min(0,+camp.info.sogliaMorte||0);
-  o.pf=Math.max(low,h.max?Math.min(h.max,h.pf+delta):h.pf+delta);
+function loadWorld(){
+  data=camp.mondo||clone(DEFAULT_DATA);
+  try{ build(); if(!Object.keys(HEX).length) throw 0; }catch(e){ data=clone(DEFAULT_DATA); build(); }
+  state=camp.sessione||freshState();
+  if(!HEX[state.pos]) state.pos=freshState().pos;
+  if(!state.meteo) newWeather(true);
+  camp.mondo=data; camp.sessione=state;
+}
+async function activate(id,save=true){
+  if(save&&camp) saveCamp();
+  await flushFile();
+  const d=load(CK(id));
+  camp=normCamp(d); camp.id=id;
+  lib.attiva=id; if(!lib.ids.includes(id)) lib.ids.push(id); store(LIB_KEY,lib);
+  loadWorld(); storeOk(CK(id),camp);
+  fileHandle=null; filePerm=false; lastSave=null;
+  render(false); refreshCfg();
+  const h=FS?await handleGet(id):null;
+  if(h&&camp.id===id){ fileHandle=h; try{ filePerm=(await h.queryPermission({mode:"readwrite"}))==="granted"; }catch(e){} }
+  fileStatusRender();
+}
+async function addCamp(c,h){
+  if(camp) saveCamp();
+  storeOk(CK(c.id),c);
+  if(!lib.ids.includes(c.id)) lib.ids.push(c.id);
+  if(h!==undefined) await handleSet(c.id,h);
+  await activate(c.id,false);
+}
+async function deleteCamp(id){
+  localStorage.removeItem(CK(id)); await handleSet(id,null);
+  lib.ids=lib.ids.filter(x=>x!==id);
+  if(!lib.ids.length){ const c=newCamp("bx"); storeOk(CK(c.id),c); lib.ids=[c.id]; }
+  store(LIB_KEY,lib);
+  if(id===camp.id) await activate(lib.ids[0],false);
+  else refreshCfg();
+}
+function download(c){
+  const blob=new Blob([JSON.stringify(c,null,1)],{type:"application/json"}), a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=slug(c.info?.nome)+".campagna.json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+const slug = s => (s||"campagna").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"campagna";
+function parseCampFile(txt){
+  const d=JSON.parse(txt);
+  if(!d||typeof d!=="object"||!d.info) throw new Error("non è un file di campagna");
+  return normCamp(d);
+}
+
+/* ============ CAMPAGNE: FILE SUL DISCO ============ */
+// Chrome ed Edge possono scrivere direttamente su un file scelto dall'utente: ogni modifica viene salvata lì.
+// Il collegamento al file resta in IndexedDB; dopo un riavvio il browser chiede di nuovo il permesso.
+const FS = "showSaveFilePicker" in window;
+const FILE_TYPES = [{description:"Campagna Enzopad",accept:{"application/json":[".json"]}}];
+let fileHandle=null, filePerm=false, lastSave=null, fileT=null, filePending=null;
+function idb(){
+  return new Promise((res,rej)=>{ const r=indexedDB.open("enzopad",1);
+    r.onupgradeneeded=()=>r.result.createObjectStore("file"); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
+}
+async function idbDo(mode,fn){
+  try{ const db=await idb();
+    return await new Promise((res,rej)=>{ const tx=db.transaction("file",mode), r=fn(tx.objectStore("file"));
+      tx.oncomplete=()=>res(r.result); tx.onerror=()=>rej(tx.error); });
+  }catch(e){ return null; }
+}
+const handleGet = id => idbDo("readonly",s=>s.get(id));
+const handleSet = (id,h) => idbDo("readwrite",s=>h?s.put(h,id):s.delete(id));
+async function writeFile(c,h){
+  try{
+    const w=await h.createWritable(); await w.write(JSON.stringify(c,null,1)); await w.close();
+    if(h===fileHandle){ lastSave=new Date(); fileStatusRender(); }
+  }catch(e){
+    if(h===fileHandle){ filePerm=false; fileStatusRender(); toast("Non riesco a scrivere sul file: riattivalo"); }
+  }
+}
+function scheduleFileSave(){
+  if(!fileHandle||!filePerm) return;
+  const c=camp, h=fileHandle;
+  clearTimeout(fileT); filePending=()=>writeFile(c,h);
+  fileT=setTimeout(()=>{ const f=filePending; filePending=null; f&&f(); },700);
+}
+async function flushFile(){ clearTimeout(fileT); const f=filePending; filePending=null; if(f) await f(); }
+document.addEventListener("visibilitychange",()=>{ if(document.hidden) flushFile(); });
+
+async function fileSaveAs(){
+  if(!FS){ download(camp); return; }
+  try{
+    const h=await showSaveFilePicker({suggestedName:slug(camp.info.nome)+".campagna.json",types:FILE_TYPES});
+    fileHandle=h; filePerm=true; await handleSet(camp.id,h);
+    saveCamp(); await flushFile(); toast("Campagna collegata a "+h.name);
+  }catch(e){ if(e.name!=="AbortError") toast("Salvataggio non riuscito"); }
+  fileStatusRender(); refreshCfg();
+}
+async function fileOpen(){
+  if(!FS){ $("#cfgFile").click(); return; }
+  try{
+    const [h]=await showOpenFilePicker({types:FILE_TYPES});
+    const c=parseCampFile(await (await h.getFile()).text());
+    let ok=false; try{ ok=(await h.requestPermission({mode:"readwrite"}))==="granted"; }catch(e){}
+    await addCamp(c,h);
+    toast("Aperta: "+(c.info.nome||h.name)+(ok?"":" (solo lettura finché non la riattivi)"));
+  }catch(e){ if(e.name!=="AbortError") toast("File non valido: "+e.message); }
+}
+async function fileReactivate(){
+  if(!fileHandle) return;
+  try{
+    if((await fileHandle.requestPermission({mode:"readwrite"}))!=="granted"){ toast("Permesso negato"); return; }
+    filePerm=true;
+    const d=JSON.parse(await (await fileHandle.getFile()).text());
+    if(d.id===camp.id&&(+d.modificata||0)>(+camp.modificata||0)){
+      storeOk(CK(camp.id),normCamp(d)); await activate(camp.id,false); toast("Caricata la versione più recente dal file");
+    } else { await writeFile(camp,fileHandle); toast("Salvataggio su file riattivato"); }
+  }catch(e){ toast("Non riesco ad aprire il file: forse è stato spostato"); }
+  fileStatusRender(); refreshCfg();
+}
+async function fileUnlink(){ await handleSet(camp.id,null); fileHandle=null; filePerm=false; lastSave=null; fileStatusRender(); refreshCfg(); }
+function fileLine(){
+  if(!FS) return "Questo browser non può scrivere file direttamente: usa «Scarica file» per salvare e «Apri file» per riprendere. Chrome ed Edge salvano sul file da soli.";
+  if(!fileHandle) return "Salvata solo in questo browser. Collegala a un file per averne una copia sul disco aggiornata a ogni modifica.";
+  return "File: "+fileHandle.name+" · "+(filePerm?(lastSave?"salvato alle "+lastSave.toLocaleTimeString("it",{hour:"2-digit",minute:"2-digit"}):"salvataggio automatico attivo"):"da riattivare (il browser chiede il permesso dopo il riavvio)");
+}
+function fileStatusRender(){
+  const st=$("#fileSt"); if(st) st.textContent=fileLine();
+  const fl=$("#fileLine"); if(fl) fl.textContent=fileLine();
+  $("#bFile").hidden=!(fileHandle&&!filePerm);
+}
+$("#bFile").addEventListener("click",fileReactivate);
+$("#cfgFile").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=async()=>{
+    try{ const c=parseCampFile(r.result); await addCamp(c); toast("Aperta: "+c.info.nome); }
+    catch(err){ toast("File non valido: "+err.message); }
+    e.target.value="";
+  };
+  r.readAsText(f);
+});
+
+/* ============ RISORSE (PF, sanità, …) ============ */
+function getPath(o,p){ return p.split("|").reduce((a,k)=>a==null?a:a[k],o); }
+function setPath(o,p,v){ const ks=p.split("|"), last=ks.pop(); ks.reduce((a,k)=>a[k]??(a[k]={}),o)[last]=v; }
+
+function hpInfo(c,r=primaria()){
+  const x=c.ris?.[r]||{}, max=+x.max||0, v=x.v===""||x.v==null?max:+x.v||0, prim=r===primaria();
+  const soglia=+camp.info.sogliaMorte||0;
+  const pct=max?Math.max(0,Math.min(100,Math.round(v/max*100))):0;
+  const dead=prim&&(c.stato==="Morto"||(max>0&&v<=soglia));
+  const label=dead?"Fuori gioco":(prim&&max>0&&v<=0)?"A terra":(prim&&max&&pct<=25)?"Grave":"";
+  const col=dead||pct<=25?"#e5484d":pct<=50?"#f2c230":"#3fb36b";
+  return {max,v,pct,dead,label,col};
+}
+const barHTML = (c,r=primaria()) => { const h=hpInfo(c,r);
+  return `<div class="hp" style="--hc:${h.col}"><i style="width:${h.pct}%"></i></div><span class="pmeta">${esc(r)} ${h.v}/${h.max}${h.label?" · "+h.label:""}</span>`; };
+function changeRes(o,r,delta){
+  const h=hpInfo(o,r), low=r===primaria()?Math.min(0,+camp.info.sogliaMorte||0):0;
+  if(!o.ris[r]) o.ris[r]={v:"",max:""};
+  o.ris[r].v=Math.max(low,h.max?Math.min(h.max,h.v+delta):h.v+delta);
 }
 
 /* ============ CAMPAGNA: PAGINA PRINCIPALE ============ */
 function renderCampSummary(){
+  const S=camp.sistema, L=S.lbl;
   $("#sCamp").textContent=camp.info.nome||"Senza nome";
-  $("#sSess").textContent=(camp.info.sistema||"")+(camp.info.sessione?" · sessione "+camp.info.sessione:"");
+  $("#sSess").textContent=[S.nome,camp.info.sessione?"sessione "+camp.info.sessione:""].filter(Boolean).join(" · ");
   const row=(c,k)=>{
     const h=hpInfo(c), lab=c.nome||"Senza nome";
-    const sub=k==="pg" ? [c.classe,c.livello?"L"+c.livello:"",c.giocatore?"("+c.giocatore+")":""]
-                       : [c.tipo,c.classe,c.livello?"L"+c.livello:"","morale "+c.morale];
+    const sub=[c.classe,L.livello&&c.livello?(L.livello==="Livello"?"L"+c.livello:L.livello+" "+c.livello):"",k==="pg"&&c.giocatore?"("+c.giocatore+")":"",k==="seguaci"?c.tipo:""];
+    const stats=S.stat.slice(0,2).filter(n=>c.stat?.[n]!==""&&c.stat?.[n]!=null).map(n=>n+" "+c.stat[n]);
     const cond=[...(c.cond||[]),c.condNote||""].filter(Boolean).join(" · ");
+    const res=S.ris.map((r,j)=>{
+      const x=hpInfo(c,r); if(j&&!x.max&&!x.v) return "";
+      return `<div class="rrow${j?" sec":""}"><span class="rl">${esc(r)}</span>
+        <div class="hp" style="--hc:${x.col}"><i style="width:${x.pct}%"></i></div>
+        <span class="hpt">${x.v}/${x.max}</span>
+        <span class="hpbtns"><button data-hp="-1" data-k="${k}" data-id="${c.id}" data-r="${esc(r)}" aria-label="${esc(r)}: meno per ${esc(lab)}">−</button><button data-hp="1" data-k="${k}" data-id="${c.id}" data-r="${esc(r)}" aria-label="${esc(r)}: più per ${esc(lab)}">+</button></span></div>`;
+    }).join("");
     return `<div class="prow${h.dead?" dead":""}">
-      <div><button class="pname" data-open="${k}" data-id="${c.id}">${esc(lab)}</button>
-        <span class="pmeta">${esc(sub.filter(Boolean).join(" "))} · CA ${esc(c.ca)}${k==="pg"?" · THAC0 "+esc(c.thac0):""}</span></div>
-      <div class="hpbtns"><span class="hpt">${h.pf}/${h.max}</span>
-        <button data-hp="${k}|${c.id}|-1" aria-label="Danno a ${esc(lab)}">−</button>
-        <button data-hp="${k}|${c.id}|1" aria-label="Cura ${esc(lab)}">+</button></div>
-      <div class="hp" style="--hc:${h.col}" title="${h.label||h.pct+"%"}"><i style="width:${h.pct}%"></i></div>
+      <div class="ptop"><button class="pname" data-open="${k}" data-id="${c.id}">${esc(lab)}</button>
+        <span class="pmeta">${esc([sub.filter(Boolean).join(" "),...stats].filter(Boolean).join(" · "))}</span></div>
+      ${res}
       ${cond||h.label?`<div class="pcond">${esc([h.label,cond].filter(Boolean).join(" · "))}</div>`:""}
     </div>`;
   };
   const pgs=camp.pg.filter(p=>p.stato==="Attivo"||p.stato==="Morto"), segs=camp.seguaci.filter(s=>s.stato==="Attivo");
   const c=camp.compagnia;
   $("#party").innerHTML=(pgs.length||segs.length)
-    ? pgs.map(p=>row(p,"pg")).join("")+(segs.length?`<div class="psec">Seguaci e mercenari</div>`+segs.map(s=>row(s,"seguaci")).join(""):"")
-      +`<div class="dung"><span class="pmeta">Dungeon: turno <b>${+c.turni||0}</b> · luce <b>${+c.luce||0}</b> turni · torce ${+c.torce||0} · olio ${+c.olio||0} · razioni ${+c.razioni||0}</span><span class="sp"></span>
-        <button data-turn="torcia">Torcia</button><button data-turn="1">+1 turno</button></div>`
+    ? pgs.map(p=>row(p,"pg")).join("")+(segs.length?`<div class="psec">Seguaci e alleati</div>`+segs.map(s=>row(s,"seguaci")).join(""):"")
+      +(oldschool()?`<div class="dung"><span class="pmeta">Dungeon: turno <b>${+c.turni||0}</b> · luce <b>${+c.luce||0}</b> turni · torce ${+c.torce||0} · olio ${+c.olio||0} · razioni ${+c.razioni||0}</span><span class="sp"></span>
+        <button data-turn="torcia">Torcia</button><button data-turn="1">+1 turno</button></div>`:"")
     : `<p class="muted" style="margin:0">Nessun personaggio. <button data-open="pg">Crea il party</button></p>`;
 }
 $("#partyCard").addEventListener("click",e=>{
   const hp=e.target.closest("[data-hp]");
   if(hp){
-    const [k,id,s]=hp.dataset.hp.split("|"), o=camp[k].find(x=>x.id===id); if(!o) return;
-    changeHp(o,(+s)*Math.max(1,+$("#hpAmt").value||1)); saveCamp(); renderCampSummary(); return;
+    const o=camp[hp.dataset.k]?.find(x=>x.id===hp.dataset.id); if(!o) return;
+    changeRes(o,hp.dataset.r,(+hp.dataset.hp)*Math.max(1,+$("#hpAmt").value||1)); saveCamp(); renderCampSummary(); return;
   }
   const op=e.target.closest("[data-open]"); if(op){ openCfg(op.dataset.open,op.dataset.id); return; }
   const t=e.target.closest("[data-turn]"); if(t){ t.dataset.turn==="1"?dungeonTurn():light("torcia"); }
@@ -759,7 +1004,7 @@ function dungeonTurn(){
   show("party","Turno "+c.turni+" nel dungeon (10 minuti)",note.join(" "));
 }
 function pxPlan(){
-  const m=+($("#pxM")?.value)||0, t=camp.info.pxOro?(+($("#pxT")?.value)||0):0, tot=m+t;
+  const m=+($("#pxM")?.value)||0, t=oldschool()&&camp.info.pxOro?(+($("#pxT")?.value)||0):0, tot=m+t;
   const pgs=camp.pg.filter(p=>p.stato==="Attivo"), segs=$("#pxS")?.checked?camp.seguaci.filter(s=>s.stato==="Attivo"):[];
   const shares=pgs.length+segs.length/2;
   if(!tot||!shares) return null;
@@ -769,9 +1014,9 @@ function pxPlan(){
 }
 function pxPreview(){
   const el=$("#pxPrev"); if(!el) return;
-  const pl=pxPlan();
-  if(!pl){ el.innerHTML=`<span class="pmeta">Inserisci i PX: vengono divisi tra i PG attivi, mezza quota ai seguaci, con il bonus del requisito primario.</span>`; return; }
-  el.innerHTML=`Totale <b>${pl.tot.toLocaleString("it")}</b> PX · quota piena ${Math.floor(pl.q).toLocaleString("it")}<ul>`+pl.list.map(x=>{
+  const pl=pxPlan(), P=camp.sistema.lbl.px;
+  if(!pl){ el.innerHTML=`<span class="pmeta">Inserisci i ${esc(P)}: vengono divisi tra i personaggi attivi${oldschool()?", con il bonus del requisito primario":""}; i seguaci prendono mezza quota.</span>`; return; }
+  el.innerHTML=`Totale <b>${pl.tot.toLocaleString("it")}</b> ${esc(P)} · quota piena ${Math.floor(pl.q).toLocaleString("it")}<ul>`+pl.list.map(x=>{
     const after=(+x.o.px||0)+x.gain, n=x.seg?null:nextPx(x.o), up=n!=null&&after>=n;
     return `<li>${esc(x.o.nome||"Senza nome")}: <b>+${x.gain.toLocaleString("it")}</b>${x.bon?` (bonus ${x.bon>0?"+":""}${x.bon}%)`:""}${x.seg?" (mezza quota)":""} → ${after.toLocaleString("it")}${up?' <span class="up">sale di livello!</span>':""}</li>`;
   }).join("")+"</ul>";
@@ -783,23 +1028,29 @@ function pxAssign(){
     const n=x.seg?null:nextPx(x.o);
     return (x.o.nome||"Senza nome")+" +"+x.gain+(n!=null&&x.o.px>=n?" (sale di livello!)":"");
   });
-  saveCamp(); show("party","PX distribuiti: "+pl.tot,righe.join(" · ")); renderCfg(true);
+  saveCamp(); show("party",camp.sistema.lbl.px+" distribuiti: "+pl.tot,righe.join(" · ")); renderCfg(true);
 }
-function restDay(){
+function recover(){
+  const r=$("#rcRes")?.value||primaria(), ex=$("#rcDice")?.value||"1d3";
+  if(!rollExpr(ex)){ toast("Dadi non validi, es. 1d3 o 2d4+2"); return; }
   const righe=[];
   for(const o of [...camp.pg.filter(p=>p.stato==="Attivo"),...camp.seguaci.filter(s=>s.stato==="Attivo")]){
-    const h=hpInfo(o); if(!h.max||h.dead) continue;
-    if(h.pf>=h.max) continue;
-    const g=dice(1,3), prima=h.pf; changeHp(o,g); righe.push((o.nome||"Senza nome")+" +"+(o.pf-prima)+" ("+o.pf+"/"+h.max+")");
+    const h=hpInfo(o,r); if(!h.max||h.dead||h.v>=h.max) continue;
+    const prima=h.v; changeRes(o,r,rollExpr(ex).tot); righe.push((o.nome||"Senza nome")+" +"+(o.ris[r].v-prima)+" ("+o.ris[r].v+"/"+h.max+")");
   }
-  saveCamp(); show("party","Giorno di riposo completo",righe.join(" · ")||"Tutti sono già in piena forma."); refreshCfg();
+  saveCamp(); show("party","Recupero di "+r+" ("+ex+")",righe.join(" · ")||"Tutti sono già al massimo."); refreshCfg();
+}
+function freeRoll(){
+  const ex=$("#drExpr")?.value, why=($("#drWhy")?.value||"").trim(), r=rollExpr(ex);
+  if(!r){ toast("Scrivi un tiro, es. 1d20+3, 3d6, 1d100, 4d6k3"); return; }
+  show("party",(why?why+": ":"Tiro ")+ex+" = "+r.tot,r.det+" = \u0003"+r.tot+"\u0004");
 }
 function initiative(){
   const a=d6(), b=d6();
   show("party","Iniziativa di gruppo","Party "+a+" · Avversari "+b+" → "+(a>b?"agisce prima il party":b>a?"agiscono prima gli avversari":"simultanea"));
 }
 function reaction(){
-  const p=camp.pg.find(x=>x.id===$("#rxWho")?.value), mod=p?modOf(p.CAR)||0:0, a=d6(), b=d6(), t=a+b+mod;
+  const p=camp.pg.find(x=>x.id===$("#rxWho")?.value), mod=p?bxMod(p.car?.CAR)||0:0, a=d6(), b=d6(), t=a+b+mod;
   const esito=t<=2?"Ostile, attacca subito":t<=5?"Ostile, potrebbe attaccare":t<=8?"Incerto, confuso":t<=11?"Indifferente, ascolta offerte":"Amichevole, disponibile";
   show("party","Reazione (2d6 "+a+"+"+b+(mod?(mod>0?"+":"")+mod:"")+" = "+t+")",esito+(p?" · parla "+(p.nome||"Senza nome"):""));
 }
@@ -811,138 +1062,186 @@ function morale(){
 }
 
 /* ============ CAMPAGNA: CONFIGURATORE ============ */
-const TABS=[["campagna","Campagna"],["pg","Personaggi"],["seguaci","Seguaci"],["compagnia","Compagnia"],["png","PNG e fazioni"],["missioni","Missioni"],["strumenti","Strumenti"]];
+const TABS=[["campagne","Campagne"],["campagna","Campagna"],["gioco","Gioco e scheda"],["pg","Personaggi"],["seguaci","Seguaci"],["compagnia","Compagnia"],["png","PNG e fazioni"],["missioni","Missioni"],["strumenti","Strumenti"]];
 let cfgTab="campagna", cfgSel=0;
 
 function F(path,label,o={}){
-  const v=getPath(camp,path), val=v??"", cls=o.cls||"";
-  if(o.type==="check") return `<label class="f chk ${cls}"><input type="checkbox" data-p="${path}"${val?" checked":""}><span>${esc(label)}</span></label>`;
+  const v=getPath(camp,path), cls=o.cls||"";
+  if(o.type==="check") return `<label class="f chk ${cls}"><input type="checkbox" data-p="${esc(path)}"${v?" checked":""}><span>${esc(label)}</span></label>`;
   let inp;
   if(o.type==="select"){
-    const opts=o.opts.map(x=>Array.isArray(x)?x:[x,x]);
+    const opts=o.opts.map(x=>Array.isArray(x)?x:[x,x]), val=v??"";
     if(val!==""&&!opts.some(x=>String(x[0])===String(val))) opts.unshift([val,val]);
-    inp=`<select data-p="${path}">${opts.map(([k,l])=>`<option value="${esc(k)}"${String(k)===String(val)?" selected":""}>${esc(l)}</option>`).join("")}</select>`;
-  } else if(o.type==="area") inp=`<textarea data-p="${path}" rows="${o.rows||3}" placeholder="${esc(o.ph||"")}">${esc(val)}</textarea>`;
-  else inp=`<input data-p="${path}" type="${o.type||"text"}" value="${esc(val)}"${o.list?` list="${o.list}"`:""}${o.ph?` placeholder="${esc(o.ph)}"`:""}${o.type==="number"?' inputmode="numeric"':""}>`;
+    inp=`<select data-p="${esc(path)}">${opts.map(([k,l])=>`<option value="${esc(k)}"${String(k)===String(val)?" selected":""}>${esc(l)}</option>`).join("")}</select>`;
+  } else if(o.type==="list") inp=`<textarea data-p="${esc(path)}" data-list rows="${o.rows||4}" placeholder="${esc(o.ph||"")}">${esc((v||[]).join("\n"))}</textarea>`;
+  else if(o.type==="area") inp=`<textarea data-p="${esc(path)}" rows="${o.rows||3}" placeholder="${esc(o.ph||"")}">${esc(v??"")}</textarea>`;
+  else inp=`<input data-p="${esc(path)}" type="${o.type||"text"}" value="${esc(v??"")}"${o.list?` list="${o.list}"`:""}${o.ph?` placeholder="${esc(o.ph)}"`:""}${o.type==="number"?' inputmode="numeric"':""}>`;
   return `<label class="f ${cls}"><span>${esc(label)}</span>${inp}</label>`;
 }
 const fs = (title,inner) => `<fieldset><legend>${esc(title)}</legend><div class="fg">${inner}</div></fieldset>`;
-const coins = base => MONETE.map(([k,l])=>F(base+"."+k,l,{type:"number"})).join("");
+const coins = base => camp.sistema.valute.map(n=>F(base+"|"+n,n,{type:"number"})).join("");
+const resFields = (b,o,i,k) => camp.sistema.ris.map(r=>F(b+"ris|"+r+"|v",r+" attuali",{type:"number"})+F(b+"ris|"+r+"|max",r+" massimi",{type:"number"})
+  +`<div class="itembar" data-d="hp" data-k="${k}" data-i="${i}" data-r="${esc(r)}">${barHTML(o,r)}</div>`).join("");
+const statFields = b => camp.sistema.stat.map(n=>F(b+"stat|"+n,n)).join("");
 
+function tabCampagne(){
+  const items=lib.ids.map(id=>id===camp.id?camp:load(CK(id))).filter(Boolean)
+    .sort((a,b)=>(b.id===camp.id)-(a.id===camp.id)||(+b.modificata||0)-(+a.modificata||0));
+  const when=t=>t?new Date(+t).toLocaleString("it",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"–";
+  return `<fieldset><legend>Campagna aperta</legend>
+      <p class="fileline" id="fileLine">${esc(fileLine())}</p>
+      <div class="row"><button data-act="fsave">${FS?(fileHandle?"Salva su un altro file…":"Collega a un file…"):"Scarica file"}</button>
+        ${fileHandle&&!filePerm?`<button data-act="freact">Riattiva il file</button>`:""}
+        ${fileHandle?`<button data-act="funlink">Scollega il file</button>`:""}
+        <button data-act="fopen">Apri file…</button></div></fieldset>
+    <fieldset><legend>Nuova campagna</legend><div class="row" style="margin-top:0">
+      <label class="f"><span>Gioco</span><select id="newPreset">${Object.entries(PRESET).map(([k,p])=>`<option value="${k}">${esc(p.nome)}</option>`).join("")}</select></label>
+      <label class="f"><span>Mappa e tabelle</span><select id="newWorld"><option value="es">Esempio</option><option value="cur">Copia dalla campagna aperta</option></select></label>
+      <button data-act="newcamp">Crea e apri</button></div></fieldset>
+    <div class="sechead"><b>Campagne in questo browser (${items.length})</b></div>
+    ${items.map(c=>`<div class="item"><div class="itemhead"><b>${esc(c.info?.nome||"Senza nome")}${c.id===camp.id?' <span class="pill">aperta</span>':""}</b>
+        ${c.id!==camp.id?`<button data-act="swc" data-id="${c.id}">Apri</button>`:""}
+        <button data-act="dupc" data-id="${c.id}">Duplica</button><button data-act="expc" data-id="${c.id}">Scarica</button><button data-act="delc" data-id="${c.id}">Elimina</button></div>
+      <div class="pmeta">${esc([c.sistema?.nome||PRESET.bx.nome,(c.pg||[]).length+" personaggi","sessione "+(c.info?.sessione||1),"modificata "+when(c.modificata)].join(" · "))}</div></div>`).join("")}
+    <p class="muted">Ogni campagna ha la sua mappa, le sue tabelle, il suo registro e il suo party. «Scarica» crea un file da conservare o portare su un altro computer: riaprendolo con «Apri file…» la campagna viene aggiornata.</p>`;
+}
 function tabCampagna(){
   return fs("Campagna",
-      F("info.nome","Nome della campagna",{cls:"w2"})+F("info.sistema","Regolamento",{list:"dlSistemi"})+F("info.master","Master")
-     +F("info.ambientazione","Ambientazione",{cls:"w2",ph:"es. Le Marche Grigie, regno di Veth"})+F("info.sessione","Sessione n°",{type:"number"})
-     +F("info.dataMondo","Data nel mondo",{ph:"es. 3 di Fiormese, 1072"})+F("info.inizio","Inizio campagna",{type:"date"})+F("info.prossima","Prossima sessione",{type:"date"}))
+      F("info|nome","Nome della campagna",{cls:"w2"})+F("info|master","Master")+F("info|ambientazione","Ambientazione",{cls:"w2"})
+     +F("info|sessione","Sessione n°",{type:"number"})+F("info|dataMondo","Data nel mondo",{ph:"es. 3 di Fiormese, 1072"})
+     +F("info|inizio","Inizio campagna",{type:"date"})+F("info|prossima","Prossima sessione",{type:"date"}))
+   +`<p class="pmeta">Gioco: <b>${esc(camp.sistema.nome)}</b> · <button data-act="tab" data-t="gioco">Cambia gioco o scheda</button></p>`
    +fs("Regole della tavola",
-      F("info.pxOro","PX per tesoro (1 mo = 1 PX)",{type:"check",cls:"w2"})+F("info.sogliaMorte","Morte a PF ≤",{type:"number"})
-     +F("info.iniziativa","Iniziativa",{type:"select",opts:["Di gruppo (d6)","Individuale (d6 + DES)","Per fase di combattimento"]})
-     +F("info.ingombro","Ingombro",{type:"select",opts:["Base (armatura + tesoro)","Dettagliato (peso in monete)","Nessuno"]})
-     +F("info.regole","Regole della casa",{type:"area",cls:"full",rows:4,ph:"Tiri critici, morte e smembramento, rianimazione, ricerca di incantesimi…"}))
-   +fs("Note del master",F("info.note","Segreti e linee temporali",{type:"area",cls:"full",rows:7,ph:"Cosa succede se i PG non intervengono, verità nascoste, orologi delle fazioni…"}));
+      (oldschool()?F("info|pxOro","PX per tesoro (1 mo = 1 PX)",{type:"check",cls:"w2"}):"")
+     +F("info|regole","Regole della casa",{type:"area",cls:"full",rows:5,ph:"Critici, morte, guarigione, iniziativa, ingombro, linee e veli…"}))
+   +fs("Note del master",F("info|note","Segreti e linee temporali",{type:"area",cls:"full",rows:7,ph:"Cosa succede se i personaggi non intervengono, verità nascoste, orologi delle fazioni…"}));
+}
+function tabGioco(){
+  const S="sistema|";
+  return `<fieldset><legend>Parti da un modello</legend><div class="row" style="margin-top:0">
+      <label class="f"><span>Modello</span><select id="presetSel">${Object.entries(PRESET).map(([k,p])=>`<option value="${k}">${esc(p.nome)}</option>`).join("")}</select></label>
+      <button data-act="preset">Applica il modello</button></div>
+      <p class="pmeta" style="margin-top:8px">Sostituisce le liste qui sotto. I valori già scritti nelle schede restano: ricompaiono se il nome coincide.</p></fieldset>`
+   +fs("Nomi",F(S+"nome","Nome del gioco",{cls:"w2"})+F(S+"lbl|classe","Etichetta «classe»",{ph:"es. Classe, Occupazione, Ruolo"})
+     +F(S+"lbl|razza","Etichetta «origine»",{ph:"vuoto = nascosto"})+F(S+"lbl|livello","Etichetta «livello»",{ph:"vuoto = nascosto"})
+     +F(S+"lbl|px","Etichetta «esperienza»",{ph:"vuoto = nascosto"})+F(S+"lbl|allineamento","Etichetta «allineamento»",{ph:"vuoto = nascosto"}))
+   +fs("Scheda del personaggio (una voce per riga)",
+      F(S+"ris","Risorse con barra (la prima è la principale)",{type:"list",ph:"PF\nSanità\nPunti magia"})
+     +F(S+"car","Caratteristiche",{type:"list",ph:"FOR\nDES\n…"})
+     +F(S+"stat","Statistiche",{type:"list",ph:"CA\nIniziativa\nVelocità"})
+     +F(S+"ts","Tiri salvezza",{type:"list",ph:"vuoto = nessuno"})
+     +F(S+"cond","Condizioni",{type:"list"})
+     +F(S+"valute","Valute",{type:"list",ph:"mo\nma"})
+     +F(S+"mod","Modificatore delle caratteristiche",{type:"select",opts:MODS})
+     +F(S+"tiroCar","Tiro delle caratteristiche",{ph:"es. 3d6, 4d6k3, 3d6*5"})
+     +F("info|sogliaMorte","Fuori gioco con la risorsa principale ≤",{type:"number"})
+     +F(S+"oldschool","Strumenti old school: tabelle di classe B/X, turni di dungeon, luce, reazione e morale",{type:"check",cls:"full"}));
 }
 
 function pgListHTML(){
+  const L=camp.sistema.lbl;
   return camp.pg.map((p,i)=>`<button class="pgitem" data-act="sel" data-i="${i}" aria-current="${i===cfgSel}">
-    <b>${esc(p.nome||"Senza nome")}</b><span class="pmeta">${esc([p.classe,"L"+(p.livello||1),p.giocatore,p.stato!=="Attivo"?p.stato:""].filter(Boolean).join(" · "))}</span>
+    <b>${esc(p.nome||"Senza nome")}</b><span class="pmeta">${esc([p.classe,L.livello&&p.livello?L.livello+" "+p.livello:"",p.giocatore,p.stato!=="Attivo"?p.stato:""].filter(Boolean).join(" · "))}</span>
     ${barHTML(p)}</button>`).join("");
 }
 function tabPG(){
   if(!camp.pg.length) return `<div class="empty"><p>Nessun personaggio nel party.</p><button data-act="add" data-k="pg">Crea il primo personaggio</button></div>`;
   cfgSel=Math.max(0,Math.min(cfgSel,camp.pg.length-1));
-  const i=cfgSel, p=camp.pg[i], b="pg."+i+".", d=(k,extra="")=>`data-d="${k}" data-k="pg" data-i="${i}"${extra}`;
+  const S=camp.sistema, L=S.lbl, os=oldschool(), i=cfgSel, p=camp.pg[i], b="pg|"+i+"|", d=(k,extra="")=>`data-d="${k}" data-k="pg" data-i="${i}"${extra}`;
   return `<div class="pgwrap">
   <div class="pgside"><div class="pglist" id="pglist">${pgListHTML()}</div><button data-act="add" data-k="pg">+ Aggiungi personaggio</button></div>
   <div>
     <div class="pghead"><b ${d("title",' data-f="nome"')}>${esc(p.nome||"Senza nome")}</b>
       <button data-act="dup" data-i="${i}">Duplica</button><button data-act="del" data-k="pg" data-i="${i}">Elimina</button></div>
     ${fs("Identità",
-        F(b+"nome","Nome")+F(b+"giocatore","Giocatore")+F(b+"classe","Classe",{list:"dlClassi"})+F(b+"razza","Razza",{list:"dlRazze"})
-       +F(b+"allineamento","Allineamento",{list:"dlAll"})+F(b+"stato","Stato",{type:"select",opts:["Attivo","Assente","Ritirato","Morto"]})
-       +F(b+"livello","Livello",{type:"number"})+F(b+"px","PX",{type:"number"})
-       +F(b+"pxBonus","Bonus PX % (vuoto = auto)",{type:"number"})
-       +`<div class="der f w2"><span ${d("bonus")}>${bonusText(p)}</span><b ${d("next")}>${esc(nextText(p))}</b></div>`)}
-    ${fs("Combattimento",
-        F(b+"pf","PF attuali",{type:"number"})+F(b+"pfMax","PF massimi",{type:"number"})+F(b+"dv","Dado vita")
-       +F(b+"ca","Classe armatura",{type:"number"})+F(b+"thac0","THAC0",{type:"number"})+F(b+"mov","Movimento")
-       +F(b+"armatura","Armatura e scudo",{cls:"w2"})+F(b+"armi","Armi (danni)",{cls:"w2"})
-       +`<div class="itembar" ${d("hp")}>${barHTML(p)}</div>`
-       +`<div class="row"><button data-act="rhp" data-i="${i}">Tira PF (DV × livello + COS)</button><button data-act="cls" data-i="${i}">Valori da classe B/X: TS, THAC0, DV</button></div>`)}
-    <fieldset><legend>Caratteristiche</legend><div class="abil">${ABIL.map(a=>`<label class="f"><span>${a}</span><input data-p="${b+a}" type="number" inputmode="numeric" min="3" max="18" value="${esc(p[a])}"><em class="mod" ${d("mod",` data-a="${a}"`)}>${fmtMod(modOf(p[a]))}</em></label>`).join("")}</div>
-      <div class="row"><button data-act="r3d6" data-i="${i}">Tira 3d6 in ordine</button></div></fieldset>
-    ${fs("Tiri salvezza",TS.map(([k,l])=>F(b+"ts."+k,l,{type:"number"})).join(""))}
-    <fieldset><legend>Condizioni</legend><div class="chips">${COND.map(c=>`<button class="chip" data-act="cond" data-i="${i}" data-c="${esc(c)}" aria-pressed="${p.cond.includes(c)}">${esc(c)}</button>`).join("")}</div>
+        F(b+"nome","Nome")+F(b+"giocatore","Giocatore")+(L.classe?F(b+"classe",L.classe,os?{list:"dlClassi"}:{}):"")+(L.razza?F(b+"razza",L.razza):"")
+       +(L.allineamento?F(b+"allineamento",L.allineamento):"")+F(b+"stato","Stato",{type:"select",opts:["Attivo","Assente","Ritirato","Morto"]})
+       +(L.livello?F(b+"livello",L.livello,{type:"number"}):"")+(L.px?F(b+"px",L.px,{type:"number"}):"")
+       +(os&&L.px?F(b+"pxBonus","Bonus "+L.px+" % (vuoto = auto)",{type:"number"})
+         +`<div class="der f w2"><span ${d("bonus")}>${esc(bonusText(p))}</span><b ${d("next")}>${esc(nextText(p))}</b></div>`:""))}
+    ${fs("Risorse",resFields(b,p,i,"pg"))}
+    ${fs("Statistiche e combattimento",statFields(b)+(os?F(b+"dv","Dado vita"):"")+F(b+"armatura","Protezioni",{cls:"w2"})+F(b+"armi","Armi (danni)",{cls:"w2"})
+       +(os?`<div class="row"><button data-act="rhp" data-i="${i}">Tira ${esc(primaria())} (DV × livello + COS)</button><button data-act="cls" data-i="${i}">Valori da classe B/X</button></div>`:""))}
+    ${S.car.length?`<fieldset><legend>Caratteristiche</legend><div class="abil">${S.car.map(a=>`<label class="f"><span>${esc(a)}</span><input data-p="${esc(b+"car|"+a)}" type="number" inputmode="numeric" value="${esc(p.car[a])}">${S.mod!=="none"?`<em class="mod" ${d("mod",` data-a="${esc(a)}"`)}>${esc(modText(p.car[a]))}</em>`:""}</label>`).join("")}</div>
+      ${S.tiroCar?`<div class="row"><button data-act="rcar" data-i="${i}">Tira ${esc(S.tiroCar)} in ordine</button></div>`:""}</fieldset>`:""}
+    ${S.ts.length?fs("Tiri salvezza",S.ts.map(k=>F(b+"ts|"+k,k,{type:"number"})).join("")):""}
+    <fieldset><legend>Condizioni</legend>${S.cond.length?`<div class="chips">${S.cond.map(c=>`<button class="chip" data-act="cond" data-i="${i}" data-c="${esc(c)}" aria-pressed="${p.cond.includes(c)}">${esc(c)}</button>`).join("")}</div>`:""}
       <div class="fg" style="margin-top:10px">${F(b+"condNote","Altri effetti in corso",{cls:"full",ph:"es. benedizione fino al turno 8, −1 FOR per 3 giorni"})}</div></fieldset>
-    ${fs("Abilità e magia",
-        F(b+"abilita","Abilità di classe",{type:"area",cls:"full",ph:"Scacciare non morti, % abilità da ladro, infravisione, rilevare porte segrete…"})
-       +F(b+"incantesimi","Incantesimi (libro e memorizzati)",{type:"area",cls:"full"})+F(b+"lingue","Lingue",{cls:"full"}))}
+    ${fs("Abilità e poteri",
+        F(b+"abilita","Abilità, talenti e capacità",{type:"area",cls:"full",rows:4})
+       +F(b+"incantesimi","Magia, poteri e incantesimi",{type:"area",cls:"full"})+F(b+"lingue","Lingue",{cls:"full"}))}
     ${fs("Equipaggiamento e ricchezze",
-        F(b+"equip","Zaino ed equipaggiamento",{type:"area",cls:"full",rows:4})+F(b+"ingombro","Ingombro",{cls:"w2",ph:"es. Leggero · 90' (30')"})+coins(b+"monete"))}
+        F(b+"equip","Equipaggiamento",{type:"area",cls:"full",rows:4})+F(b+"ingombro","Ingombro",{cls:"w2"})+coins(b+"monete"))}
     ${fs("Note",F(b+"note","Storia, legami, debiti, segreti",{type:"area",cls:"full",rows:4}))}
   </div></div>`;
 }
-function bonusText(p){ const v=pxBonus(p); return "Bonus PX "+(v>0?"+":"")+v+"%"+(p.pxBonus===""||p.pxBonus==null?" (auto)":""); }
 
 function itemsHTML(key,title,fields,tf="nome"){
   const arr=camp[key];
   return `<div class="sechead"><b>${esc(title)}</b><button data-act="add" data-k="${key}">Aggiungi</button></div>`
     +(arr.length?arr.map((o,i)=>`<div class="item" id="it-${o.id}"><div class="itemhead"><b data-d="title" data-k="${key}" data-i="${i}" data-f="${tf}">${esc(o[tf]||"Senza nome")}</b>
-      <button data-act="del" data-k="${key}" data-i="${i}">Elimina</button></div><div class="fg">${fields(key+"."+i+".",o,i)}</div></div>`).join("")
+      <button data-act="del" data-k="${key}" data-i="${i}">Elimina</button></div><div class="fg">${fields(key+"|"+i+"|",o,i)}</div></div>`).join("")
      :`<p class="muted">Nessuna voce.</p>`);
 }
 function tabSeguaci(){
-  const padroni=[["","—"],...camp.pg.map(p=>[p.id,p.nome||"Senza nome"])];
-  return itemsHTML("seguaci","Seguaci, mercenari e specialisti",(b,o,i)=>
-      F(b+"nome","Nome")+F(b+"tipo","Tipo",{type:"select",opts:["Seguace","Mercenario","Specialista","Animale"]})+F(b+"classe","Classe / mestiere",{list:"dlClassi"})
-     +F(b+"livello","Livello",{type:"number"})+F(b+"padrone","Al servizio di",{type:"select",opts:padroni})+F(b+"stato","Stato",{type:"select",opts:["Attivo","Congedato","Disertore","Morto"]})
-     +F(b+"pf","PF attuali",{type:"number"})+F(b+"pfMax","PF massimi",{type:"number"})+F(b+"ca","CA",{type:"number"})+F(b+"thac0","THAC0",{type:"number"})
-     +F(b+"morale","Morale (2–12)",{type:"number"})+F(b+"paga","Paga",{ph:"es. 1 mo al giorno + metà quota"})+F(b+"px","PX",{type:"number"})
-     +`<div class="itembar" data-d="hp" data-k="seguaci" data-i="${i}">${barHTML(o)}</div>`
+  const L=camp.sistema.lbl, padroni=[["","—"],...camp.pg.map(p=>[p.id,p.nome||"Senza nome"])];
+  return itemsHTML("seguaci","Seguaci, mercenari e alleati",(b,o,i)=>
+      F(b+"nome","Nome")+F(b+"tipo","Tipo",{type:"select",opts:["Seguace","Mercenario","Specialista","Alleato","Animale"]})+F(b+"classe",L.classe||"Mestiere")
+     +(L.livello?F(b+"livello",L.livello,{type:"number"}):"")+F(b+"padrone","Al servizio di",{type:"select",opts:padroni})
+     +F(b+"stato","Stato",{type:"select",opts:["Attivo","Congedato","Disertore","Morto"]})
+     +resFields(b,o,i,"seguaci")+statFields(b)
+     +F(b+"morale","Morale / lealtà",{type:"number"})+F(b+"paga","Paga",{ph:"es. 1 mo al giorno + metà quota"})+(L.px?F(b+"px",L.px,{type:"number"}):"")
      +F(b+"equip","Equipaggiamento",{cls:"full"})+F(b+"note","Note",{type:"area",cls:"full",rows:2}));
 }
 function tabCompagnia(){
-  const c="compagnia.";
-  return fs("Esplorazione",
-      F(c+"marcia","Ordine di marcia",{type:"area",cls:"w2",ph:"1. Guerriero e nano\n2. Ladro (luce) e chierico\n3. Mago e mercenario"})
+  const c="compagnia|", os=oldschool();
+  return fs("In marcia",
+      F(c+"marcia","Ordine di marcia o formazione",{type:"area",cls:"w2",ph:"1. Guerriero e nano\n2. Ladro (luce) e chierico\n3. Mago"})
      +F(c+"guardie","Turni di guardia",{type:"area",cls:"w2",ph:"1° turno: …\n2° turno: …"})
-     +F(c+"turni","Turni nel dungeon",{type:"number"})+F(c+"luce","Luce: turni rimasti",{type:"number"})
-     +`<div class="row"><button data-act="turn">+1 turno (10 min)</button><button data-act="torcia">Accendi torcia (6 turni)</button><button data-act="lanterna">Riempi lanterna (24 turni)</button><button data-act="turn0">Azzera turni</button></div>`)
-   +fs("Scorte",F(c+"torce","Torce",{type:"number"})+F(c+"olio","Fiasche d'olio",{type:"number"})+F(c+"razioni","Razioni (giorni)",{type:"number"})
-     +F(c+"acqua","Otri d'acqua",{type:"number"})+F(c+"animali","Animali e veicoli",{cls:"w2",ph:"2 muli, 1 carretto"}))
-   +fs("Tesoro comune",coins(c+"monete")+F(c+"gemme","Gemme e gioielli",{type:"area",cls:"w2"})+F(c+"magici","Oggetti magici non identificati",{type:"area",cls:"w2"}))
-   +fs("Note",F(c+"note","Note del party",{type:"area",cls:"full",rows:3,ph:"Basi, debiti, nemici giurati, mappe in possesso…"}));
+     +(os?F(c+"turni","Turni nel dungeon",{type:"number"})+F(c+"luce","Luce: turni rimasti",{type:"number"})
+       +`<div class="row"><button data-act="turn">+1 turno (10 min)</button><button data-act="torcia">Accendi torcia (6 turni)</button><button data-act="lanterna">Riempi lanterna (24 turni)</button><button data-act="turn0">Azzera turni</button></div>`:""))
+   +fs("Scorte",(os?F(c+"torce","Torce",{type:"number"})+F(c+"olio","Fiasche d'olio",{type:"number"})+F(c+"razioni","Razioni (giorni)",{type:"number"})
+     +F(c+"acqua","Otri d'acqua",{type:"number"}):"")+F(c+"animali","Mezzi e cavalcature",{cls:"w2"})
+     +F(c+"risorse","Altre risorse",{type:"area",cls:"full",ph:"Munizioni, medicine, contatti, favori…"}))
+   +fs("Tesoro comune",coins(c+"monete")+F(c+"gemme","Preziosi",{type:"area",cls:"w2"})+F(c+"magici","Oggetti speciali o non identificati",{type:"area",cls:"w2"}))
+   +fs("Note",F(c+"note","Note del gruppo",{type:"area",cls:"full",rows:3,ph:"Basi, debiti, nemici giurati, mappe in possesso…"}));
 }
 function tabPNG(){
+  const att=["Ostile","Diffidente","Neutrale","Amichevole","Alleato"];
   return itemsHTML("png","PNG",(b)=>
-      F(b+"nome","Nome")+F(b+"ruolo","Ruolo")+F(b+"fazione","Fazione",{list:"dlFaz"})+F(b+"dove","Dove (hex o luogo)")
-     +F(b+"atteggiamento","Verso il party",{type:"select",opts:["Ostile","Diffidente","Neutrale","Amichevole","Alleato"]})
+      F(b+"nome","Nome")+F(b+"ruolo","Ruolo")+F(b+"fazione","Fazione",{list:"dlFaz"})+F(b+"dove","Dove")
+     +F(b+"atteggiamento","Verso il gruppo",{type:"select",opts:att})
      +F(b+"stato","Stato",{type:"select",opts:["Vivo","Scomparso","Prigioniero","Morto"]})+F(b+"note","Note",{type:"area",cls:"full",rows:2}))
    +`<datalist id="dlFaz">${camp.fazioni.map(f=>`<option>${esc(f.nome)}</option>`).join("")}</datalist>`
    +itemsHTML("fazioni","Fazioni",(b)=>
-      F(b+"nome","Nome")+F(b+"capo","Capo")+F(b+"base","Base")+F(b+"rapporto","Verso il party",{type:"select",opts:["Ostile","Diffidente","Neutrale","Amichevole","Alleato"]})
+      F(b+"nome","Nome")+F(b+"capo","Capo")+F(b+"base","Base")+F(b+"rapporto","Verso il gruppo",{type:"select",opts:att})
      +F(b+"obiettivo","Obiettivo e prossima mossa",{type:"area",cls:"full",rows:2})+F(b+"note","Note",{type:"area",cls:"full",rows:2}));
 }
 function tabMissioni(){
   return itemsHTML("missioni","Missioni, agganci e voci",(b)=>
       F(b+"titolo","Titolo",{cls:"w2"})+F(b+"stato","Stato",{type:"select",opts:["Aperta","In corso","Completata","Fallita","Abbandonata"]})
-     +F(b+"committente","Committente")+F(b+"dove","Dove (hex o luogo)")+F(b+"ricompensa","Ricompensa")
+     +F(b+"committente","Committente")+F(b+"dove","Dove")+F(b+"ricompensa","Ricompensa")
      +F(b+"note","Dettagli e indizi",{type:"area",cls:"full",rows:3}),"titolo");
 }
 function tabStrumenti(){
-  const pgs=camp.pg.filter(p=>p.stato==="Attivo");
-  return `<fieldset id="tools"><legend>Distribuisci PX</legend><div class="fg">
-      <label class="f"><span>PX da mostri sconfitti</span><input id="pxM" type="number" inputmode="numeric" min="0" value=""></label>
-      <label class="f"><span>Tesoro recuperato (mo)</span><input id="pxT" type="number" inputmode="numeric" min="0" value=""${camp.info.pxOro?"":" disabled"}></label>
+  const S=camp.sistema, os=oldschool(), pgs=camp.pg.filter(p=>p.stato==="Attivo");
+  return (S.lbl.px?`<fieldset id="tools"><legend>Distribuisci ${esc(S.lbl.px)}</legend><div class="fg">
+      <label class="f"><span>${esc(S.lbl.px)} guadagnati${os?" (mostri)":""}</span><input id="pxM" type="number" inputmode="numeric" min="0" value=""></label>
+      ${os?`<label class="f"><span>Tesoro recuperato (mo)</span><input id="pxT" type="number" inputmode="numeric" min="0" value=""${camp.info.pxOro?"":" disabled"}></label>`:""}
       <label class="f chk"><input id="pxS" type="checkbox" checked><span>Seguaci a mezza quota</span></label></div>
-      <div id="pxPrev"></div><div class="row"><button data-act="pxgo">Assegna PX e registra</button></div></fieldset>
-    <fieldset><legend>Tiri rapidi (finiscono nel registro della sessione)</legend>
-      <div class="row"><button data-act="rest">Giorno di riposo: 1d3 PF a tutti</button><button data-act="init">Iniziativa di gruppo</button></div>
-      <div class="row"><label class="f"><span>Chi parla</span><select id="rxWho"><option value="">Nessun modificatore</option>${pgs.map(p=>`<option value="${p.id}">${esc(p.nome||"Senza nome")} (CAR ${fmtMod(modOf(p.CAR))})</option>`).join("")}</select></label><button data-act="react">Tiro reazione 2d6</button></div>
+      <div id="pxPrev"></div><div class="row"><button data-act="pxgo">Assegna e registra</button></div></fieldset>`:"")
+   +`<fieldset><legend>Tiri rapidi (finiscono nel registro della sessione)</legend>
+      <div class="row" style="margin-top:0"><label class="f"><span>Tiro</span><input id="drExpr" value="1d20" placeholder="1d20+3"></label>
+        <label class="f"><span>Motivo</span><input id="drWhy" placeholder="es. Prova di Furtività"></label><button data-act="droll">Tira</button></div>
+      <div class="row"><label class="f"><span>Recupera</span><select id="rcRes">${S.ris.map(r=>`<option>${esc(r)}</option>`).join("")}</select></label>
+        <label class="f" style="flex-basis:110px"><span>Dadi a testa</span><input id="rcDice" value="1d3"></label><button data-act="rest">Recupero per tutti</button></div>
+      ${os?`<div class="row"><button data-act="init">Iniziativa di gruppo (d6)</button></div>
+      <div class="row"><label class="f"><span>Chi parla</span><select id="rxWho"><option value="">Nessun modificatore</option>${pgs.map(p=>`<option value="${p.id}">${esc(p.nome||"Senza nome")} (CAR ${fmtMod(bxMod(p.car?.CAR))})</option>`).join("")}</select></label><button data-act="react">Tiro reazione 2d6</button></div>
       <div class="row"><label class="f"><span>Prova di morale per</span><select id="moWho"><option value="">Avversari</option>${camp.seguaci.filter(s=>s.stato==="Attivo").map(s=>`<option value="${s.id}">${esc(s.nome||"Seguace")}</option>`).join("")}</select></label>
-        <label class="f" style="flex-basis:90px"><span>Morale</span><input id="moVal" type="number" min="2" max="12" value="8"></label><button data-act="morale">Prova di morale</button></div>
+        <label class="f" style="flex-basis:90px"><span>Morale</span><input id="moVal" type="number" min="2" max="12" value="8"></label><button data-act="morale">Prova di morale</button></div>`:""}
     </fieldset>`;
 }
-const RENDER={campagna:tabCampagna,pg:tabPG,seguaci:tabSeguaci,compagnia:tabCompagnia,png:tabPNG,missioni:tabMissioni,strumenti:tabStrumenti};
+const RENDER={campagne:tabCampagne,campagna:tabCampagna,gioco:tabGioco,pg:tabPG,seguaci:tabSeguaci,compagnia:tabCompagnia,png:tabPNG,missioni:tabMissioni,strumenti:tabStrumenti};
 
 function renderCfg(keepScroll){
   const body=$("#cfgBody"), st=body.scrollTop;
@@ -950,6 +1249,7 @@ function renderCfg(keepScroll){
   $("#cfgTabs").innerHTML=TABS.map(([k,l])=>`<button role="tab" data-act="tab" data-t="${k}" aria-selected="${k===cfgTab}">${l}</button>`).join("");
   body.innerHTML=RENDER[cfgTab]();
   body.scrollTop=keepScroll?st:0;
+  fileStatusRender();
   if(cfgTab==="strumenti") pxPreview();
 }
 function refreshCfg(){ if(!$("#cfg").hidden) renderCfg(true); }
@@ -957,10 +1257,10 @@ function refreshDerived(){
   $("#cfgBody").querySelectorAll("[data-d]").forEach(el=>{
     const o=camp[el.dataset.k]?.[+el.dataset.i]; if(!o) return;
     switch(el.dataset.d){
-      case "mod": el.textContent=fmtMod(modOf(o[el.dataset.a])); break;
+      case "mod": el.textContent=modText(o.car?.[el.dataset.a]); break;
       case "next": el.textContent=nextText(o); break;
       case "bonus": el.textContent=bonusText(o); break;
-      case "hp": el.innerHTML=barHTML(o); break;
+      case "hp": el.innerHTML=barHTML(o,el.dataset.r); break;
       case "title": el.textContent=o[el.dataset.f]||"Senza nome"; break;
     }
   });
@@ -986,21 +1286,30 @@ $("#cfg").addEventListener("input",e=>{
   if(["pxM","pxT","pxS"].includes(el.id)){ pxPreview(); return; }
   if(el.id==="moWho"){ const s=camp.seguaci.find(x=>x.id===el.value); if(s) $("#moVal").value=s.morale; return; }
   const p=el.dataset.p; if(!p) return;
-  const v=el.type==="checkbox"?el.checked : el.type==="number"?(el.value===""?"":+el.value) : el.value;
-  setPath(camp,p,v); saveCamp(); refreshDerived();
-  if(p==="info.pxOro"&&$("#pxT")) $("#pxT").disabled=!v;
+  const v=el.type==="checkbox"?el.checked : el.dataset.list!=null?el.value.split("\n").map(s=>s.trim()).filter(Boolean)
+        : el.type==="number"?(el.value===""?"":+el.value) : el.value;
+  if(p==="sistema|ris"&&!v.length) return; // serve almeno una risorsa principale
+  setPath(camp,p,v);
+  if(p.startsWith("sistema|")) ensureAll(camp);
+  saveCamp(); refreshDerived();
+  if(p==="info|pxOro"&&$("#pxT")) $("#pxT").disabled=!v;
 });
-$("#cfg").addEventListener("click",e=>{
+$("#cfg").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.id==="drExpr"){ e.preventDefault(); freeRoll(); }
+});
+$("#cfg").addEventListener("click",async e=>{
   const b=e.target.closest("[data-act]"); if(!b) return;
   const i=+b.dataset.i, k=b.dataset.k, p=camp.pg[i];
   switch(b.dataset.act){
     case "tab": cfgTab=b.dataset.t; renderCfg(false); return;
     case "sel": cfgSel=i; renderCfg(false); return;
     case "add": {
-      const o=NUOVO[k](); camp[k].push(o); saveCamp();
+      const o=NUOVO[k](); if(k==="pg"||k==="seguaci") ensureChar(o,camp.sistema);
+      if(k==="pg"&&oldschool()) applyClass(o);
+      camp[k].push(o); saveCamp();
       if(k==="pg") cfgSel=camp.pg.length-1;
       renderCfg(k!=="pg"); renderCampSummary();
-      const el=k==="pg"?$("#cfgBody [data-p='pg."+cfgSel+".nome']"):$("#it-"+o.id+" input");
+      const el=k==="pg"?$(`#cfgBody [data-p="pg|${cfgSel}|nome"]`):$("#it-"+o.id+" input");
       el?.scrollIntoView({block:"center"}); el?.focus(); return;
     }
     case "del":
@@ -1012,63 +1321,79 @@ $("#cfg").addEventListener("click",e=>{
     }
     case "cls":
       if(!applyClass(p)){ toast("Tabelle disponibili solo per le classi B/X"); return; }
-      saveCamp(); renderCfg(true); renderCampSummary(); toast("TS, THAC0 e DV da "+p.classe+" L"+(p.livello||1)); return;
-    case "r3d6":
-      if(ABIL.some(a=>p[a]!=="")&&!armed(b)) return;
-      ABIL.forEach(a=>p[a]=dice(3,6)); saveCamp(); renderCfg(true); renderCampSummary(); return;
+      saveCamp(); renderCfg(true); renderCampSummary(); toast("Valori da "+p.classe+" L"+(p.livello||1)); return;
+    case "rcar": {
+      const S=camp.sistema;
+      if(!rollExpr(S.tiroCar)){ toast("Tiro delle caratteristiche non valido"); return; }
+      if(S.car.some(a=>p.car[a]!==""&&p.car[a]!=null)&&!armed(b)) return;
+      S.car.forEach(a=>p.car[a]=rollExpr(S.tiroCar).tot); saveCamp(); renderCfg(true); renderCampSummary(); return;
+    }
     case "rhp": {
-      const s=+String(p.dv).replace(/\D/g,"")||CLASSI[p.classe]?.dv;
+      const s=+String(p.dv).replace(/\D/g,"")||CLASSI[p.classe]?.dv, r=primaria();
       if(!s){ toast("Indica il dado vita, es. d8"); return; }
-      if(+p.pfMax>0&&!armed(b)) return;
-      const cm=modOf(p.COS)||0; let t=0;
+      if(+p.ris[r]?.max>0&&!armed(b)) return;
+      const cm=bxMod(p.car.COS)||0; let t=0;
       for(let n=0;n<Math.min(9,Math.max(1,+p.livello||1));n++) t+=Math.max(1,dice(1,s)+cm);
-      p.pfMax=t; p.pf=t; saveCamp(); renderCfg(true); renderCampSummary(); toast("PF: "+t); return;
+      p.ris[r]={v:t,max:t}; saveCamp(); renderCfg(true); renderCampSummary(); toast(r+": "+t); return;
     }
     case "cond": {
       const c=b.dataset.c, on=!p.cond.includes(c);
       p.cond=on?[...p.cond,c]:p.cond.filter(x=>x!==c);
       b.setAttribute("aria-pressed",on); saveCamp(); renderCampSummary(); return;
     }
+    case "preset":
+      if(!armed(b)) return;
+      camp.sistema=clone(PRESET[$("#presetSel").value]); ensureAll(camp); saveCamp(); renderCfg(true); renderCampSummary();
+      toast("Modello applicato: "+camp.sistema.nome); return;
     case "turn": dungeonTurn(); return;
     case "torcia": light("torcia"); return;
     case "lanterna": light("lanterna"); return;
     case "turn0": camp.compagnia.turni=0; saveCamp(); renderCfg(true); renderCampSummary(); return;
     case "pxgo": pxAssign(); return;
-    case "rest": restDay(); return;
+    case "rest": recover(); return;
+    case "droll": freeRoll(); toast("Tiro nel registro"); return;
     case "init": initiative(); toast("Iniziativa nel registro"); return;
     case "react": reaction(); toast("Reazione nel registro"); return;
     case "morale": morale(); toast("Morale nel registro"); return;
-    case "exp": {
-      const blob=new Blob([JSON.stringify(camp,null,1)],{type:"application/json"}), a=document.createElement("a");
-      a.href=URL.createObjectURL(blob); a.download="campagna-"+(camp.info.nome||"senza-nome").toLowerCase().replace(/[^a-z0-9]+/g,"-")+".json";
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); return;
+    case "fsave": await fileSaveAs(); return;
+    case "fopen": await fileOpen(); return;
+    case "freact": await fileReactivate(); return;
+    case "funlink": if(!armed(b)) return; await fileUnlink(); toast("File scollegato: la campagna resta nel browser"); return;
+    case "newcamp": {
+      const c=newCamp($("#newPreset").value);
+      if($("#newWorld").value==="cur"){ c.mondo=clone(data); }
+      ensureAll(c); await addCamp(c,null); cfgTab="campagna"; renderCfg(false); toast("Nuova campagna creata");
+      $(`#cfgBody [data-p="info|nome"]`)?.select(); return;
     }
-    case "newcamp":
+    case "swc": await activate(b.dataset.id); toast("Aperta: "+(camp.info.nome||"campagna")); return;
+    case "dupc": {
+      if(b.dataset.id===camp.id) saveCamp();
+      const src=b.dataset.id===camp.id?camp:load(CK(b.dataset.id)); if(!src) return;
+      const c=normCamp(clone(src)); c.id=uid()+uid(); c.info.nome=(c.info.nome||"Campagna")+" (copia)"; c.creata=c.modificata=Date.now();
+      storeOk(CK(c.id),c); lib.ids.push(c.id); store(LIB_KEY,lib); renderCfg(true); toast("Duplicata"); return;
+    }
+    case "expc": {
+      if(b.dataset.id===camp.id){ saveCamp(); download(camp); } else { const c=load(CK(b.dataset.id)); if(c) download(c); }
+      return;
+    }
+    case "delc":
       if(!armed(b)) return;
-      camp=newCamp(); saveCamp(); cfgTab="campagna"; cfgSel=0; renderCfg(false); renderCampSummary(); toast("Nuova campagna"); return;
+      await deleteCamp(b.dataset.id); toast("Campagna eliminata"); return;
   }
-});
-$("#cfgFile").addEventListener("change",e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=()=>{
-    try{ const d=JSON.parse(r.result); if(!d.info) throw 0; camp=normCamp(d); saveCamp(); cfgSel=0; renderCfg(false); renderCampSummary(); toast("Campagna importata"); }
-    catch(err){ toast("File non valido: serve un JSON esportato da qui"); }
-    e.target.value="";
-  };
-  r.readAsText(f);
 });
 $("#cfgClose").addEventListener("click",()=>$("#cfg").hidden=true);
 $("#bCfg").addEventListener("click",()=>openCfg());
 $("#bCfg2").addEventListener("click",()=>openCfg());
 
 /* ============ AVVIO ============ */
-data = load("hexdm:dati") || clone(DEFAULT_DATA);
-try{ build(); if(!Object.keys(HEX).length) throw 0; }catch(e){ data=clone(DEFAULT_DATA); build(); }
-state = load("hexdm:stato") || freshState();
-if(!HEX[state.pos]) state.pos=freshState().pos;
-if(!state.meteo) newWeather(true);
-render(false);
+lib = load(LIB_KEY);
+if(!lib||!Array.isArray(lib.ids)||!lib.ids.length){
+  // Primo avvio, o dati della versione con una sola campagna
+  const c=normCamp(load("hexdm:campagna"));
+  c.mondo=load("hexdm:dati"); c.sessione=load("hexdm:stato");
+  storeOk(CK(c.id),c); lib={attiva:c.id,ids:[c.id]}; store(LIB_KEY,lib);
+}
+activate(lib.ids.includes(lib.attiva)?lib.attiva:lib.ids[0],false).catch(e=>console.error("avvio",e.stack));
 </script>
 </body>
 </html>
