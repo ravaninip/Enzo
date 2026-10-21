@@ -1,0 +1,47 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Campagna e party
+        2. …
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options: [Chrome, Edge, Firefox, Safari, Other]
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: e.g. Windows 11, macOS 15
+  - type: dropdown
+    id: launchpad
+    attributes:
+      label: Launchpad
+      options: [None, Launchpad X, Launchpad Mini MK3, Launchpad Pro MK3, Other]
+  - type: input
+    id: game
+    attributes:
+      label: Game template of the campaign
+      placeholder: e.g. B/X · OSE, D&D 5e, Call of Cthulhu
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or campaign file
+      description: A screenshot helps. Attach a campaign file only if it contains nothing private.

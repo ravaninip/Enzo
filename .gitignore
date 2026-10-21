@@ -1,0 +1,7 @@
+# Campaign files are personal: keep them out of the repository
+*.campagna.json
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
