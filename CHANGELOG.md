@@ -7,6 +7,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - README with screenshots, contributing guide, issue and pull request templates.
+- AGPL-3.0 license.
 
 ### Fixed
 - Resource bars in the party card are aligned even when resource names have different lengths.

@@ -1,5 +1,7 @@
 # Enzopad
 
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+
 A game master's table companion for tabletop RPG sessions: hexcrawl map, one-click random tables,
 party sheets with health bars and a session log, all in a single offline web page. Works with a
 Novation Launchpad (Web MIDI) or with the on-screen pads.
@@ -24,6 +26,7 @@ Novation Launchpad (Web MIDI) or with the on-screen pads.
 - [Where your data lives](#where-your-data-lives)
 - [Known limitations](#known-limitations)
 - [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
@@ -116,3 +119,9 @@ Nothing is sent anywhere. Clearing the browser data deletes the browser copy, so
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+Enzopad is free software released under the [GNU Affero General Public License v3.0](LICENSE).
+You can use, study, share and modify it. If you distribute a modified version, or make it available to
+others over a network, you must share its source code under the same license.
